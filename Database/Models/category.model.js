@@ -31,8 +31,15 @@ const schema = new mongoose.Schema(
   {
     timestamps: true,
     versionKey: false,
+    toJSON: { virtuals: true },
   }
 );
+
+schema.virtual("subCategories", {
+  ref: "SubCategory",
+  localField: "_id",
+  foreignField: "category",
+});
 
 const Category = mongoose.model("Category", schema);
 

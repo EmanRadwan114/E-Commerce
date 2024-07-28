@@ -139,7 +139,7 @@ export const getAllSubCategories = asyncHandler(async (req, res, next) => {
     .populate([
       {
         path: "category",
-        select: "name slug -_id",
+        select: "name slug image -_id",
       },
       {
         path: "createdBy",

@@ -112,3 +112,22 @@ export const deleteCategory = asyncHandler(async (req, res, next) => {
 
   res.json({ message: "category deleted successfully" });
 });
+
+// ==================== get All categories with their related sub-categories ====================
+export const getAllCategories = asyncHandler(async (req, res, next) => {
+  const categories = await Category.find().populate([
+    {
+      path: "subCategories",
+      select: "name slug image -_id -category",
+    },
+    {
+      path: "createdBy",
+      select: "name -_id",
+    },
+  ]);
+
+  if (!categories)
+    return next(new AppError("no categories found for this category", 404));
+
+  res.json({ message: "categories fetched successfully", categories });
+});

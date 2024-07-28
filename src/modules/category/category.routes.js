@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   createCategory,
   deleteCategory,
+  getAllCategories,
   updateCategory,
 } from "./category.controllers.js";
 import auth from "./../../middlewares/auth.middleware.js";
@@ -13,6 +14,7 @@ import {
   updateCategSchema,
 } from "./category.validation.js";
 import subCategoryRouter from "../subCategory/subCategory.routes.js";
+import systemRoles from "../../utils/systemRoles.js";
 
 const categoryRouter = Router();
 
@@ -27,6 +29,9 @@ categoryRouter.post(
   validation(createCategSchema),
   createCategory
 );
+
+// ==================== get All Categories with their related subCategories ====================
+categoryRouter.get("/", auth(Object.values(systemRoles)), getAllCategories);
 
 // ========================================= update category =========================================
 categoryRouter.put(
