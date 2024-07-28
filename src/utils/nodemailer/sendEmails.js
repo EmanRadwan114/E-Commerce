@@ -6,19 +6,19 @@ export default async function sendEmails(to, subject, link) {
     secure: false, // Use `true` for port 465, `false` for all other ports
     service: "gmail",
     auth: {
-      user: "emanalaa11499@gmail.com",
+      user: process.env.SENDER_EMAIL,
       pass: process.env.APP_PASS,
     },
   });
 
   const info = await transporter.sendMail({
     from: '"Eman Radwan ✨" <emanalaa11499@gmail.com>',
-    to: to ? to : "emanalaa11499@gmail.com",
+    to: to ? to : process.env.SENDER_EMAIL,
     subject: subject ? subject : "Email Verification ✔",
-    html: `<h1 style="font-weight:900; font-size:30px; color:blue; margin-bottom:20px">Verify Your Email</h1>
-             <a href=${link} style="padding:7px 12px; background-color:white; 
-             border:1px solid blue; color:blue; font-size:20px; font-weight:600">
-             Click here to verify
-             </a>`,
+    html: `<div style="width:80%; margin:0 auto; text-align:center; padding:20px; border:1px solid blue; border-radius:10px; background-color:whitesmoke">
+             <h1 style="font-weight:900; font-size:30px; color:blue; margin-bottom:20px">Verify Your Email</h1>
+             ${link}
+           </div>
+          `,
   });
 }

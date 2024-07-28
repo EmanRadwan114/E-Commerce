@@ -1,0 +1,28 @@
+import Joi from "joi";
+import commonFields from "../../utils/validation/commonFieldsVal.js";
+
+export const createCategSchema = {
+  body: Joi.object({
+    name: Joi.string().required(),
+  }),
+  headers: commonFields.headers.required(),
+  file: commonFields.file.required(),
+};
+
+export const updateCategSchema = {
+  body: Joi.object({
+    name: Joi.string(),
+  }),
+  headers: commonFields.headers.required(),
+  file: commonFields.file,
+  params: Joi.object({
+    categoryId: commonFields.id.required(),
+  }),
+};
+
+export const deleteCategSchema = {
+  headers: commonFields.headers.required(),
+  params: Joi.object({
+    categoryId: commonFields.id.required(),
+  }),
+};

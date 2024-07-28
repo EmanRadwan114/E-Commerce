@@ -1,3 +1,5 @@
+import multer from "multer";
+
 const validExtensions = {
   image: ["image/png", "image/jpg", "image/jpeg"],
   pdf: ["application/pdf"],
@@ -17,6 +19,7 @@ export default function multerMiddleware(extension = validExtensions.image) {
 
   const upload = multer({
     storage,
+    fileFilter,
   });
 
   return upload;

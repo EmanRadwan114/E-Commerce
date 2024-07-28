@@ -6,10 +6,12 @@ export default function validation(schema) {
 
     schemaOptions.forEach((option) => {
       if (schema[option]) {
-        const err = schema[option].validate(req[option], { abortEarly: false });
+        const { error } = schema[option].validate(req[option], {
+          abortEarly: false,
+        });
 
-        if (err)
-          err.details.forEach((detail) => {
+        if (error)
+          error.details.forEach((detail) => {
             arrError.push(detail.message);
           });
       }

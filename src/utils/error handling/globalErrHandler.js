@@ -3,3 +3,5 @@ const globalErrHandler = (err, req, res, next) => {
     .status(err.statusCode || 500)
     .json({ message: err.message, statusCode: err.statusCode });
 };
+
+export default globalErrHandler;
