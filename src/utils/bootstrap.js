@@ -1,3 +1,4 @@
+import brandRouter from "../modules/brand/brand.routes.js";
 import categoryRouter from "../modules/category/category.routes.js";
 import subCategoryRouter from "../modules/subCategory/subCategory.routes.js";
 import userRouter from "./../modules/user/user.routes.js";
@@ -14,13 +15,14 @@ export default function bootstrap(app, express) {
   app.use("/auth", userRouter);
   app.use("/categories", categoryRouter);
   app.use("/sub-categories", subCategoryRouter);
+  app.use("/brands", brandRouter);
 
   // ============================== error handler ===============================
-  app.use(globalErrHandler);
-
   app.use("*", (req, res, next) => {
-    next(new AppError(`page not found at ${req.originalUrl}`, 404));
+    return next(new AppError(`page not found at ${req.originalUrl}`, 404));
   });
+
+  app.use(globalErrHandler);
 
   // ========================== error outside express ===========================
   process.on("unhandledRejection", (err) => {
