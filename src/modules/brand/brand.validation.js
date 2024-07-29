@@ -3,7 +3,7 @@ import commonFields from "../../utils/validation/commonFieldsVal.js";
 
 export const createBrandSchema = {
   body: Joi.object({
-    name: Joi.string().required(),
+    name: Joi.string().min(3).max(50).required(),
   }),
   headers: commonFields.headers.required(),
   file: commonFields.file.required(),
@@ -11,7 +11,7 @@ export const createBrandSchema = {
 
 export const updateBrandSchema = {
   body: Joi.object({
-    name: Joi.string(),
+    name: Joi.string().min(3).max(50),
   }),
   headers: commonFields.headers.required(),
   file: commonFields.file,

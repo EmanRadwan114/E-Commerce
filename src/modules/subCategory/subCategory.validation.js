@@ -3,7 +3,7 @@ import commonFields from "../../utils/validation/commonFieldsVal.js";
 
 export const createSubCategSchema = {
   body: Joi.object({
-    name: Joi.string().required(),
+    name: Joi.string().min(3).max(50).required(),
   }),
   headers: commonFields.headers.required(),
   file: commonFields.file,
@@ -14,7 +14,7 @@ export const createSubCategSchema = {
 
 export const updateSubCategSchema = {
   body: Joi.object({
-    name: Joi.string(),
+    name: Joi.string().min(3).max(50),
   }),
   headers: commonFields.headers.required(),
   file: commonFields.file,

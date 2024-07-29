@@ -8,6 +8,7 @@ const schema = new mongoose.Schema(
       required: [true, "category name is required"],
       trim: true,
       minLength: 3,
+      maxLength: 50,
       lowerCase: true,
       unique: true,
     },
@@ -15,6 +16,7 @@ const schema = new mongoose.Schema(
       type: String,
       trim: true,
       minLength: 3,
+      maxLength: 100,
       lowerCase: true,
     },
     createdBy: {

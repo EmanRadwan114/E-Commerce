@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 
 const schema = new mongoose.Schema(
   {
-    name: {
+    title: {
       type: String,
-      required: [true, "brand name is required"],
+      required: [true, "product name is required"],
       trim: true,
       minLength: 3,
       maxLength: 50,
