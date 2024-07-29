@@ -37,11 +37,11 @@ export const createCategory = asyncHandler(async (req, res, next) => {
     folderId,
   });
 
-  newCategory.save();
+  await newCategory.save();
 
   return res.status(201).json({
-    message: "category created successfully",
-    category: newCategory,
+    message: "success",
+    data: newCategory,
   });
 });
 
@@ -57,7 +57,7 @@ export const updateCategory = asyncHandler(async (req, res, next) => {
   if (!category) return next(new AppError("category not found", 404));
 
   if (name) {
-    if (name === category.name)
+    if (name.toLowerCase() === category.name)
       return next(new AppError("name should be different", 409));
 
     if (await Category.findOne({ name: name.toLowerCase() }))
@@ -85,9 +85,9 @@ export const updateCategory = asyncHandler(async (req, res, next) => {
     };
   }
 
-  category.save();
+  await category.save();
 
-  return res.json({ message: "category updated successfully", category });
+  return res.json({ message: "success", data: category });
 });
 
 // ========================================= delete category ==========================================
@@ -110,7 +110,7 @@ export const deleteCategory = asyncHandler(async (req, res, next) => {
     `E-Commerce_NodeC42/categories/${category.folderId}`
   );
 
-  res.json({ message: "category deleted successfully" });
+  res.json({ message: "success" });
 });
 
 // ===================================== get specific category by Id ======================================
@@ -124,7 +124,7 @@ export const getCategoryById = asyncHandler(async (req, res, next) => {
 
   if (!category) return next(new AppError("no category found", 404));
 
-  res.json({ message: "category fetched successfully", category });
+  res.json({ message: "success", data: category });
 });
 
 // ==================== get All categories with their related sub-categories ====================
@@ -143,7 +143,7 @@ export const getAllCategories = asyncHandler(async (req, res, next) => {
   if (!categories)
     return next(new AppError("no categories found for this category", 404));
 
-  res.json({ message: "categories fetched successfully", categories });
+  res.json({ message: "success", data: categories });
 });
 
 // ===================================== get All categories for specific user ======================================
@@ -152,5 +152,5 @@ export const getUserCategories = asyncHandler(async (req, res, next) => {
 
   if (!categories) return next(new AppError("no categories found", 404));
 
-  res.json({ message: "categories fetched successfully", categories });
+  res.json({ message: "success", data: categories });
 });

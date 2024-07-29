@@ -1,10 +1,11 @@
-import brandRouter from "../modules/brand/brand.routes.js";
-import categoryRouter from "../modules/category/category.routes.js";
-import subCategoryRouter from "../modules/subCategory/subCategory.routes.js";
-import userRouter from "./../modules/user/user.routes.js";
 import AppError from "./error handling/AppError.js";
 import globalErrHandler from "./error handling/globalErrHandler.js";
+import userRouter from "./../modules/user/user.routes.js";
+import categoryRouter from "../modules/category/category.routes.js";
+import subCategoryRouter from "../modules/subCategory/subCategory.routes.js";
+import brandRouter from "../modules/brand/brand.routes.js";
 import couponRouter from "./../modules/coupon/coupon.routes.js";
+import productRouter from "../modules/product/product.routes.js";
 
 export default function bootstrap(app, express) {
   const PORT = process.env.PORT || 3000;
@@ -18,6 +19,7 @@ export default function bootstrap(app, express) {
   app.use("/sub-categories", subCategoryRouter);
   app.use("/brands", brandRouter);
   app.use("/coupons", couponRouter);
+  app.use("/products", productRouter);
 
   // ============================== error handler ===============================
   app.use("*", (req, res, next) => {

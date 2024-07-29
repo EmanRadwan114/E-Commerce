@@ -27,6 +27,7 @@ brandRouter
   .route("/")
   .post(
     auth(["admin", "superAdmin"]),
+    multerMiddleware(["image/png", "image/jpg", "image/jpeg"]).single("image"),
     validation(createBrandSchema),
     createBrand
   )
@@ -54,6 +55,7 @@ brandRouter
   )
   .put(
     auth(["admin", "superAdmin"]),
+    multerMiddleware(["image/png", "image/jpg", "image/jpeg"]).single("image"),
     validation(updateBrandSchema),
     updateBrand
   )

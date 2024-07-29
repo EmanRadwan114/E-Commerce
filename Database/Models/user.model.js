@@ -9,6 +9,7 @@ const schema = new mongoose.Schema(
       trim: true,
       minLength: 3,
       maxLength: 15,
+      lowerCase: true,
     },
     email: {
       type: String,

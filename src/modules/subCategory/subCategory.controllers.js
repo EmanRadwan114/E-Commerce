@@ -40,11 +40,11 @@ export const createSubCategory = asyncHandler(async (req, res, next) => {
     folderId,
   });
 
-  newSubCategory.save();
+  await newSubCategory.save();
 
   return res.status(201).json({
-    message: "subCategory created successfully",
-    subCategory: newSubCategory,
+    message: "success",
+    data: newSubCategory,
   });
 });
 
@@ -67,7 +67,7 @@ export const updateSubCategory = asyncHandler(async (req, res, next) => {
   if (!subCategory) return next(new AppError("sub-category not found", 404));
 
   if (name) {
-    if (name === subCategory.name)
+    if (name.toLowerCase() === subCategory.name)
       return next(new AppError("name should be different", 409));
 
     if (await SubCategory.findOne({ name: name.toLowerCase() }))
@@ -95,11 +95,11 @@ export const updateSubCategory = asyncHandler(async (req, res, next) => {
     };
   }
 
-  subCategory.save();
+  await subCategory.save();
 
   return res.json({
-    message: "sub-category updated successfully",
-    subCategory,
+    message: "success",
+    data: subCategory,
   });
 });
 
@@ -128,7 +128,7 @@ export const deleteSubCategory = asyncHandler(async (req, res, next) => {
     `E-Commerce_NodeC42/categories/${category.folderId}/subCategories/${subCategory.folderId}`
   );
 
-  res.json({ message: "sub-category deleted successfully" });
+  res.json({ message: "success" });
 });
 
 // ===================================== get specific sub-category by Id ======================================
@@ -160,7 +160,7 @@ export const getSubCategById = asyncHandler(async (req, res, next) => {
 
   if (!subCategory) return next(new AppError("no subCategory found", 404));
 
-  res.json({ message: "subCategory fetched successfully", subCategory });
+  res.json({ message: "success", data: subCategory });
 });
 
 // ==================== get All SubCategories with their related categories ====================
@@ -185,7 +185,7 @@ export const getAllSubCategories = asyncHandler(async (req, res, next) => {
   if (!subCategories)
     return next(new AppError("no sub-categories found for this category", 404));
 
-  res.json({ message: "sub-categories fetched successfully", subCategories });
+  res.json({ message: "success", data: subCategories });
 });
 
 // ===================================== get All subCategories for specific user ======================================
@@ -210,5 +210,5 @@ export const getUserSubCategories = asyncHandler(async (req, res, next) => {
 
   if (!subCategories) return next(new AppError("no subCategories found", 404));
 
-  res.json({ message: "subCategories fetched successfully", subCategories });
+  res.json({ message: "success", data: subCategories });
 });

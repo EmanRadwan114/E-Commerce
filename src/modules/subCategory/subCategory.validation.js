@@ -6,7 +6,7 @@ export const createSubCategSchema = {
     name: Joi.string().min(3).max(50).required(),
   }),
   headers: commonFields.headers.required(),
-  file: commonFields.file,
+  file: commonFields.file.required(),
   params: Joi.object({
     categoryId: commonFields.id.required(),
   }),

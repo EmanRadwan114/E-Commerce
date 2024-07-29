@@ -36,11 +36,11 @@ export const createBrand = asyncHandler(async (req, res, next) => {
     folderId,
   });
 
-  newBrand.save();
+  await newBrand.save();
 
   return res.status(201).json({
-    message: "brand created successfully",
-    brand: newBrand,
+    message: "success",
+    data: newBrand,
   });
 });
 
@@ -56,7 +56,7 @@ export const updateBrand = asyncHandler(async (req, res, next) => {
   if (!brand) return next(new AppError("brand not found", 404));
 
   if (name) {
-    if (name === brand.name)
+    if (name.toLowerCase() === brand.name)
       return next(new AppError("name should be different", 409));
 
     if (await Brand.findOne({ name: name.toLowerCase() }))
@@ -84,9 +84,9 @@ export const updateBrand = asyncHandler(async (req, res, next) => {
     };
   }
 
-  brand.save();
+  await brand.save();
 
-  return res.json({ message: "brand updated successfully", brand });
+  return res.json({ message: "success", data: brand });
 });
 
 // ========================================= delete brand ==========================================
@@ -107,7 +107,7 @@ export const deleteBrand = asyncHandler(async (req, res, next) => {
     `E-Commerce_NodeC42/brands/${brand.folderId}`
   );
 
-  res.json({ message: "brand deleted successfully" });
+  res.json({ message: "success" });
 });
 
 // ===================================== get specific brand by Id ======================================
@@ -118,7 +118,7 @@ export const getBrandById = asyncHandler(async (req, res, next) => {
 
   if (!brand) return next(new AppError("no brand found", 404));
 
-  res.json({ message: "brand fetched successfully", brand });
+  res.json({ message: "success", data: brand });
 });
 
 // ===================================== get All brands  ======================================
@@ -127,7 +127,7 @@ export const getAllBrands = asyncHandler(async (req, res, next) => {
 
   if (!brands) return next(new AppError("no brands found", 404));
 
-  res.json({ message: "brands fetched successfully", brands });
+  res.json({ message: "success", data: brands });
 });
 
 // ===================================== get All brands for specific user ======================================
@@ -136,5 +136,5 @@ export const getUserBrands = asyncHandler(async (req, res, next) => {
 
   if (!brands) return next(new AppError("no brands found", 404));
 
-  res.json({ message: "brands fetched successfully", brands });
+  res.json({ message: "success", data: brands });
 });

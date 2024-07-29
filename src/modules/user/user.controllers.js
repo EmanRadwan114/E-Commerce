@@ -13,7 +13,14 @@ export const signup = asyncHandler(async (req, res, next) => {
   const hashedPass = await bcrypt.hash(password, +process.env.SALT_ROUND);
   password = hashedPass;
 
-  const user = new User({ email, password, age, phone, address, name });
+  const user = new User({
+    email,
+    password,
+    age,
+    phone,
+    address,
+    name: name.toLowerCase(),
+  });
   await user.save();
 
   if (!user)
@@ -45,8 +52,7 @@ export const signup = asyncHandler(async (req, res, next) => {
   ).catch((err) => next(err));
 
   res.status(201).json({
-    message:
-      "user created successfully, please check your email for verification",
+    message: "success",
   });
 });
 
@@ -68,8 +74,8 @@ export const verifyEmail = asyncHandler(async (req, res, next) => {
     return next(new AppError("user does not exist or already verified", 400));
 
   res.json({
-    message: "email verified successfully",
-    user,
+    message: "success",
+    data: user,
   });
 });
 
@@ -108,7 +114,7 @@ export const refreshToken = asyncHandler(async (req, res, next) => {
   ).catch((err) => next(err));
 
   res.json({
-    message: "a new verification link is sent successfully to your email",
+    message: "success",
   });
 });
 
@@ -128,7 +134,7 @@ export const signin = asyncHandler(async (req, res, next) => {
 
   await User.updateOne({ email }, { isUserLoggedIn: true });
 
-  return res.json({ message: "user logged in successfully", userToken });
+  return res.json({ message: "success", token: userToken });
 });
 
 // ========================================= forget password ==========================================
@@ -149,7 +155,7 @@ export const forgetPassword = asyncHandler(async (req, res, next) => {
 
   await User.updateOne({ email }, { code }).catch((err) => next(err));
 
-  res.json({ message: "code sent successfully" });
+  res.json({ message: "success" });
 });
 
 // ========================================= reset password ==========================================
@@ -170,5 +176,5 @@ export const resetPassword = asyncHandler(async (req, res, next) => {
     { password: hashedPass, code: "", passwordChangedAt: Date.now() }
   );
 
-  return res.json({ message: "password changed successfully" });
+  return res.json({ message: "success" });
 });
