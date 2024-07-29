@@ -26,3 +26,18 @@ export const deleteCategSchema = {
     categoryId: commonFields.id.required(),
   }),
 };
+
+export const getCategByIdSchema = {
+  headers: commonFields.headers.required(),
+  params: Joi.object({
+    categoryId: commonFields.id.required(),
+  }),
+};
+
+export const getUserCategsSchema = {
+  headers: commonFields.headers.required(),
+};
+
+export const getAllCategsSchema = {
+  headers: commonFields.headers.required(),
+};

@@ -110,9 +110,29 @@ export const deleteBrand = asyncHandler(async (req, res, next) => {
   res.json({ message: "brand deleted successfully" });
 });
 
+// ===================================== get specific brand by Id ======================================
+export const getBrandById = asyncHandler(async (req, res, next) => {
+  const { brandId } = req.params;
+
+  const brand = await Brand.find({ _id: brandId, createdBy: req.user._id });
+
+  if (!brand) return next(new AppError("no brand found", 404));
+
+  res.json({ message: "brand fetched successfully", brand });
+});
+
 // ===================================== get All brands  ======================================
 export const getAllBrands = asyncHandler(async (req, res, next) => {
   const brands = await Brand.find().select("name slug image");
+
+  if (!brands) return next(new AppError("no brands found", 404));
+
+  res.json({ message: "brands fetched successfully", brands });
+});
+
+// ===================================== get All brands for specific user ======================================
+export const getUserBrands = asyncHandler(async (req, res, next) => {
+  const brands = await Brand.find({ createdBy: req.user._id });
 
   if (!brands) return next(new AppError("no brands found", 404));
 

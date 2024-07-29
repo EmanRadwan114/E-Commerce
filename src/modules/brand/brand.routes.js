@@ -5,45 +5,62 @@ import validation from "./../../middlewares/validation.middleware.js";
 import {
   createBrandSchema,
   deleteBrandSchema,
+  getAllBrandsSchema,
+  getBrandByIdSchema,
+  getUserBrandsSchema,
   updateBrandSchema,
 } from "./brand.validation.js";
 import {
   createBrand,
   deleteBrand,
   getAllBrands,
+  getBrandById,
+  getUserBrands,
   updateBrand,
 } from "./brand.controllers.js";
 import systemRoles from "./../../utils/systemRoles.js";
 
 const brandRouter = Router();
 
-// ========================================= create brand =========================================
-brandRouter.post(
-  "/",
+// ========================== create brand & get all brands ===========================
+brandRouter
+  .route("/")
+  .post(
+    auth(["admin", "superAdmin"]),
+    validation(createBrandSchema),
+    createBrand
+  )
+  .get(
+    auth(Object.values(systemRoles)),
+    validation(getAllBrandsSchema),
+    getAllBrands
+  );
+
+// ================================ get user brands ======================================
+brandRouter.get(
+  "/user",
   auth(["admin", "superAdmin"]),
-  multerMiddleware(["image/png", "image/jpg", "image/jpeg"]).single("image"),
-  validation(createBrandSchema),
-  createBrand
+  validation(getUserBrandsSchema),
+  getUserBrands
 );
 
-// ======================================== get All brands =========================================
-brandRouter.get("/", auth(Object.values(systemRoles)), getAllBrands);
-
-// ========================================= update brand =========================================
-brandRouter.put(
-  "/:brandId",
-  auth(["admin", "superAdmin"]),
-  multerMiddleware(["image/png", "image/jpg", "image/jpeg"]).single("image"),
-  validation(updateBrandSchema),
-  updateBrand
-);
-
-// ========================================= delete brand ==========================================
-brandRouter.delete(
-  "/:brandId",
-  auth(["admin", "superAdmin"]),
-  validation(deleteBrandSchema),
-  deleteBrand
-);
+// ============================ update, delete and get brand =============================
+brandRouter
+  .route("/:brandId")
+  .get(
+    auth(Object.values(systemRoles)),
+    validation(getBrandByIdSchema),
+    getBrandById
+  )
+  .put(
+    auth(["admin", "superAdmin"]),
+    validation(updateBrandSchema),
+    updateBrand
+  )
+  .delete(
+    auth(["admin", "superAdmin"]),
+    validation(deleteBrandSchema),
+    deleteBrand
+  );
 
 export default brandRouter;

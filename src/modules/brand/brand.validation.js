@@ -26,3 +26,18 @@ export const deleteBrandSchema = {
     brandId: commonFields.id.required(),
   }),
 };
+
+export const getBrandByIdSchema = {
+  headers: commonFields.headers.required(),
+  params: Joi.object({
+    brandId: commonFields.id.required(),
+  }),
+};
+
+export const getUserBrandsSchema = {
+  headers: commonFields.headers.required(),
+};
+
+export const getAllBrandsSchema = {
+  headers: commonFields.headers.required(),
+};

@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import systemRoles from "../../src/utils/systemRoles.js";
 
 const schema = new mongoose.Schema(
   {
@@ -31,7 +30,6 @@ const schema = new mongoose.Schema(
   {
     timestamps: true,
     versionKey: false,
-    toJSON: { virtuals: true },
   }
 );
 

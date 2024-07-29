@@ -113,6 +113,20 @@ export const deleteCategory = asyncHandler(async (req, res, next) => {
   res.json({ message: "category deleted successfully" });
 });
 
+// ===================================== get specific category by Id ======================================
+export const getCategoryById = asyncHandler(async (req, res, next) => {
+  const { categoryId } = req.params;
+
+  const category = await Category.find({
+    _id: categoryId,
+    createdBy: req.user._id,
+  });
+
+  if (!category) return next(new AppError("no category found", 404));
+
+  res.json({ message: "category fetched successfully", category });
+});
+
 // ==================== get All categories with their related sub-categories ====================
 export const getAllCategories = asyncHandler(async (req, res, next) => {
   const categories = await Category.find().populate([
@@ -128,6 +142,15 @@ export const getAllCategories = asyncHandler(async (req, res, next) => {
 
   if (!categories)
     return next(new AppError("no categories found for this category", 404));
+
+  res.json({ message: "categories fetched successfully", categories });
+});
+
+// ===================================== get All categories for specific user ======================================
+export const getUserCategories = asyncHandler(async (req, res, next) => {
+  const categories = await Category.find({ createdBy: req.user._id });
+
+  if (!categories) return next(new AppError("no categories found", 404));
 
   res.json({ message: "categories fetched successfully", categories });
 });

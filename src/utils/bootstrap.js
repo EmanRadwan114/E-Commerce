@@ -4,6 +4,7 @@ import subCategoryRouter from "../modules/subCategory/subCategory.routes.js";
 import userRouter from "./../modules/user/user.routes.js";
 import AppError from "./error handling/AppError.js";
 import globalErrHandler from "./error handling/globalErrHandler.js";
+import couponRouter from "./../modules/coupon/coupon.routes.js";
 
 export default function bootstrap(app, express) {
   const PORT = process.env.PORT || 3000;
@@ -16,6 +17,7 @@ export default function bootstrap(app, express) {
   app.use("/categories", categoryRouter);
   app.use("/sub-categories", subCategoryRouter);
   app.use("/brands", brandRouter);
+  app.use("/coupons", couponRouter);
 
   // ============================== error handler ===============================
   app.use("*", (req, res, next) => {

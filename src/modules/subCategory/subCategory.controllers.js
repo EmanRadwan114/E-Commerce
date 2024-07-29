@@ -131,10 +131,45 @@ export const deleteSubCategory = asyncHandler(async (req, res, next) => {
   res.json({ message: "sub-category deleted successfully" });
 });
 
+// ===================================== get specific sub-category by Id ======================================
+export const getSubCategById = asyncHandler(async (req, res, next) => {
+  const { categoryId } = req.params;
+
+  const category = await Category.findOne({
+    _id: categoryId,
+    createdBy: req.user._id,
+  });
+  if (!category) return next(new AppError("category not found", 404));
+
+  const subCategory = await SubCategory.find({
+    _id: req.params.subCategoryId,
+    category: categoryId,
+    createdBy: req.user._id,
+  })
+    .populate([
+      {
+        path: "category",
+        select: "name slug image -_id",
+      },
+      {
+        path: "createdBy",
+        select: "name -_id",
+      },
+    ])
+    .select("name image slug -_id");
+
+  if (!subCategory) return next(new AppError("no subCategory found", 404));
+
+  res.json({ message: "subCategory fetched successfully", subCategory });
+});
+
 // ==================== get All SubCategories with their related categories ====================
 export const getAllSubCategories = asyncHandler(async (req, res, next) => {
   const { categoryId } = req.params;
+
   const category = await Category.findById(categoryId);
+  if (!category) return next(new AppError("category not found", 404));
+
   const subCategories = await SubCategory.find()
     .populate([
       {
@@ -151,4 +186,29 @@ export const getAllSubCategories = asyncHandler(async (req, res, next) => {
     return next(new AppError("no sub-categories found for this category", 404));
 
   res.json({ message: "sub-categories fetched successfully", subCategories });
+});
+
+// ===================================== get All subCategories for specific user ======================================
+export const getUserSubCategories = asyncHandler(async (req, res, next) => {
+  const { categoryId } = req.params;
+
+  const category = await Category.findById(categoryId);
+  if (!category) return next(new AppError("category not found", 404));
+
+  const subCategories = await SubCategory.find({ createdBy: req.user._id })
+    .populate([
+      {
+        path: "category",
+        select: "name slug image -_id",
+      },
+      {
+        path: "createdBy",
+        select: "name -_id",
+      },
+    ])
+    .select("name image slug -_id");
+
+  if (!subCategories) return next(new AppError("no subCategories found", 404));
+
+  res.json({ message: "subCategories fetched successfully", subCategories });
 });

@@ -31,3 +31,19 @@ export const deleteSubCategSchema = {
     subCategoryId: commonFields.id.required(),
   }),
 };
+
+export const getSubCategByIdSchema = {
+  headers: commonFields.headers.required(),
+  params: Joi.object({
+    categoryId: commonFields.id.required(),
+    subCategoryId: commonFields.id.required(),
+  }),
+};
+
+export const getUserSubCategsSchema = {
+  headers: commonFields.headers.required(),
+};
+
+export const getAllSubCategsSchema = {
+  headers: commonFields.headers.required(),
+};
