@@ -39,7 +39,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
   const folderId = nanoid(5);
 
   let coverImgs = [];
-  req.files.images.forEach(async (img) => {
+  req.files.images.map(async (img) => {
     const { secure_url, public_id } = await cloudinary.uploader.upload(
       img.path,
       {
