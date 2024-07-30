@@ -10,7 +10,8 @@ const checkCartAuthorization = asyncHandler(async (req, res, next) => {
 
   if (
     req.user._id !== cartExists.user ||
-    (req.user.role !== "admin" && req.user.role !== "superAdmin")
+    req.user.role !== "admin" ||
+    req.user.role !== "superAdmin"
   )
     return next(new AppError("you are unauthorized", 401));
 
