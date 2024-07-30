@@ -195,7 +195,10 @@ export const getUserSubCategories = asyncHandler(async (req, res, next) => {
   const category = await Category.findById(categoryId);
   if (!category) return next(new AppError("category not found", 404));
 
-  const subCategories = await SubCategory.find({ createdBy: req.user._id })
+  const subCategories = await SubCategory.find({
+    createdBy: req.user._id,
+    category: categoryId,
+  })
     .populate([
       {
         path: "category",
