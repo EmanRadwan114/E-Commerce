@@ -14,7 +14,7 @@ const auth = (roles = []) => {
     const user = await User.findOne({ email: decoded?.email });
     if (!user) return next(new AppError("user not exists", 404));
 
-    if (parseInt(user.passwordChangedAt.getTime() / 1000) > decoded.iat)
+    if (parseInt(user.passwordChangedAt?.getTime() / 1000) > decoded.iat)
       return next(new AppError("password changed please login again", 401));
 
     // authorization
