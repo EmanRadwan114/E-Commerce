@@ -31,7 +31,7 @@ export const createCoupon = asyncHandler(async (req, res, next) => {
 // ========================================= update coupon ==========================================
 export const updateCoupon = asyncHandler(async (req, res, next) => {
   const { couponId } = req.params;
-  const { code } = req.body;
+  const { code, amount, expiryDate, fromDate } = req.body;
 
   const couponExist = await Coupon.findOne({
     _id: couponId,
@@ -49,9 +49,11 @@ export const updateCoupon = asyncHandler(async (req, res, next) => {
     couponExist.code = code.toLowerCase();
   }
 
-  if (req.body.expiryDate) couponExist.expiryDate = req.body.expiryDate;
+  if (expiryDate) couponExist.expiryDate = expiryDate;
 
-  if (req.body.fromDate) couponExist.fromDate = req.body.fromDate;
+  if (fromDate) couponExist.fromDate = fromDate;
+
+  if (amount) couponExist.amount = amount;
 
   await couponExist.save();
 
