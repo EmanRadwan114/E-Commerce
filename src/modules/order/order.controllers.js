@@ -2,6 +2,7 @@ import asyncHandler from "./../../utils/error handling/asyncHandler.js";
 import AppError from "../../utils/error handling/AppError.js";
 import Cart from "./../../../Database/Models/cart.model.js";
 import Product from "../../../Database/Models/product.model.js";
+import Order from "./../../../Database/Models/order.model.js";
 
 // ========================================= create product =========================================
 export const createOrder = asyncHandler(async (req, res, next) => {
