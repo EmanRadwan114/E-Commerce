@@ -38,15 +38,15 @@ export const createProduct = asyncHandler(async (req, res, next) => {
 
   const folderId = nanoid(5);
 
-  let coverImgs = [];
-  req.files.images.map(async (img) => {
+  let coverImages = [];
+  req.files.images.forEach(async (img) => {
     const { secure_url, public_id } = await cloudinary.uploader.upload(
       img.path,
       {
         folder: `E-Commerce_NodeC42/categories/${categoryExist.folderId}/subCategories/${subCategoryExist.folderId}/products/${folderId}/coverImages`,
       }
     );
-    coverImgs.push({ secure_url, public_id });
+    coverImages.push({ secure_url, public_id });
   });
 
   const { secure_url, public_id } = await cloudinary.uploader.upload(
@@ -71,7 +71,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
       lower: true,
     }),
     image: { secure_url, public_id },
-    coverImages: coverImgs,
+    coverImages,
     createdBy: req.user._id,
     folderId,
   });
