@@ -29,7 +29,7 @@ productRouter
     auth([systemRoles.admin, systemRoles.superAdmin]),
     multerMiddleware(["image/png", "image/jpg", "image/jpeg"]).fields([
       { name: "image", maxCount: 1 },
-      { name: "images", maxCount: 5 },
+      { name: "coverImages", maxCount: 5 },
     ]),
     validation(createProductSchema),
     createProduct
