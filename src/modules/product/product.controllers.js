@@ -39,7 +39,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
   const folderId = nanoid(5);
 
   let coverImgs = [];
-  req.files.coverImages.forEach(async (img) => {
+  for (const img of req.files.coverImages) {
     const { secure_url, public_id } = await cloudinary.uploader.upload(
       img.path,
       {
@@ -47,7 +47,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
       }
     );
     coverImgs.push({ secure_url, public_id });
-  });
+  }
 
   const { secure_url, public_id } = await cloudinary.uploader.upload(
     req.files.image[0].path,
@@ -181,19 +181,20 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
     if (req.files.coverImages) {
       let coverImgs = [];
 
-      req.files.coverImages.forEach(async (img) => {
-        product.coverImages.forEach(async (coverImg) => {
-          await cloudinary.uploader.destroy(coverImg.public_id);
-        });
+      for (const productImg of product.coverImages) {
+        await cloudinary.uploader.destroy(productImg.public_id);
+      }
 
+      for (const img of req.files.coverImages) {
         const { secure_url, public_id } = await cloudinary.uploader.upload(
           img.path,
           {
-            folder: `E-Commerce_NodeC42/categories/${categoryExist.folderId}/subCategories/${subCategoryExist.folderId}/products/${product.folderId}/coverImages`,
+            folder: `E-Commerce_NodeC42/categories/${categoryExist.folderId}/subCategories/${subCategoryExist.folderId}/products/${folderId}/coverImages`,
           }
         );
         coverImgs.push({ secure_url, public_id });
-      });
+      }
+
       product.coverImages = coverImgs;
     }
   }
