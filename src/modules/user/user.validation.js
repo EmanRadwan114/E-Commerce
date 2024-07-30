@@ -1,5 +1,6 @@
 import Joi from "joi";
 import commonFields from "./../../utils/validation/commonFieldsVal.js";
+import systemRoles from "./../../utils/systemRoles.js";
 
 export const signupSchema = {
   body: Joi.object({
@@ -9,6 +10,11 @@ export const signupSchema = {
     age: Joi.number().required(),
     phone: Joi.array().items(Joi.string()),
     address: Joi.array().items(Joi.string()),
+    role: Joi.string().valid(
+      systemRoles.user,
+      systemRoles.admin,
+      systemRoles.superAdmin
+    ),
   }),
 };
 
