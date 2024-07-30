@@ -39,10 +39,10 @@ export const updateCart = asyncHandler(async (req, res, next) => {
   const { quantity } = req.body;
   const { cartExists } = req.cart;
 
-  const productExist = await Product.findById(
-    { _id: productId },
-    { stock: { $gte: quantity } }
-  );
+  const productExist = await Product.findOne({
+    _id: productId,
+    stock: { $gte: quantity },
+  });
   if (!productExist)
     return next(new AppError("product not exist or out of stock", 404));
 
