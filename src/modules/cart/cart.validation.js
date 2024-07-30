@@ -10,7 +10,7 @@ export const addProductToCartSchema = {
 
 export const updateCartSchema = {
   body: Joi.object({
-    quantity: Joi.number().min(1).required(),
+    quantity: Joi.number().min(1).integer().required(),
   }),
   headers: commonFields.headers.required(),
   params: Joi.object({
