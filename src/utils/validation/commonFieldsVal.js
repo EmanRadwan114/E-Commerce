@@ -34,7 +34,7 @@ const commonFields = {
         fieldname: Joi.string().required(),
       })
     ),
-    images: Joi.array().items(
+    coverImages: Joi.array().items(
       Joi.object({
         size: Joi.number().positive().required(),
         path: Joi.string().required(),
