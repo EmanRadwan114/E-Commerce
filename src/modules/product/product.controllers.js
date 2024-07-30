@@ -95,6 +95,7 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
     title,
     description,
   } = req.body;
+
   const { productId } = req.params;
 
   let categoryExist, subCategoryExist;
@@ -189,7 +190,7 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
         const { secure_url, public_id } = await cloudinary.uploader.upload(
           img.path,
           {
-            folder: `E-Commerce_NodeC42/categories/${categoryExist.folderId}/subCategories/${subCategoryExist.folderId}/products/${folderId}/coverImages`,
+            folder: `E-Commerce_NodeC42/categories/${categoryExist.folderId}/subCategories/${subCategoryExist.folderId}/products/${product.folderId}/coverImages`,
           }
         );
         coverImgs.push({ secure_url, public_id });
