@@ -5,7 +5,7 @@ import Cart from "../../Database/Models/cart.model.js";
 const checkCartAuthorization = asyncHandler(async (req, res, next) => {
   const { cartId } = req.params;
 
-  const cartExists = await Cart.findOne(cartId);
+  const cartExists = await Cart.findById(cartId);
   if (!cartExists) return next(new AppError("cart not found", 404));
 
   if (
