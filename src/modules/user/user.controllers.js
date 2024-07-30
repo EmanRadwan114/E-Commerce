@@ -8,7 +8,7 @@ import { nanoid } from "nanoid";
 
 // ========================================= signup =========================================
 export const signup = asyncHandler(async (req, res, next) => {
-  let { email, password, age, phone, address, name } = req.body;
+  let { email, password, age, phone, address, name, role } = req.body;
 
   const hashedPass = await bcrypt.hash(password, +process.env.SALT_ROUND);
   password = hashedPass;
@@ -20,6 +20,7 @@ export const signup = asyncHandler(async (req, res, next) => {
     phone,
     address,
     name: name.toLowerCase(),
+    role,
   });
   await user.save();
 
