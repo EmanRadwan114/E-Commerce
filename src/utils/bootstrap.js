@@ -6,6 +6,8 @@ import subCategoryRouter from "../modules/subCategory/subCategory.routes.js";
 import brandRouter from "../modules/brand/brand.routes.js";
 import couponRouter from "./../modules/coupon/coupon.routes.js";
 import productRouter from "../modules/product/product.routes.js";
+import cartRouter from "../modules/cart/cart.routes.js";
+import orderRouter from "../modules/order/order.routes.js";
 
 export default function bootstrap(app, express) {
   const PORT = process.env.PORT || 3000;
@@ -20,6 +22,8 @@ export default function bootstrap(app, express) {
   app.use("/brands", brandRouter);
   app.use("/coupons", couponRouter);
   app.use("/products", productRouter);
+  app.use("/cart", cartRouter);
+  app.use("/orders", orderRouter);
 
   // ============================== error handler ===============================
   app.use("*", (req, res, next) => {

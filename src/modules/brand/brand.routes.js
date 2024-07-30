@@ -26,7 +26,10 @@ const brandRouter = Router();
 brandRouter
   .route("/")
   .post(
-    auth(["admin", "superAdmin"]),
+    auth([
+      Object.values(systemRoles).admin,
+      Object.values(systemRoles).superAdmin,
+    ]),
     multerMiddleware(["image/png", "image/jpg", "image/jpeg"]).single("image"),
     validation(createBrandSchema),
     createBrand
@@ -40,7 +43,10 @@ brandRouter
 // ================================ get user brands ======================================
 brandRouter.get(
   "/user",
-  auth(["admin", "superAdmin"]),
+  auth([
+    Object.values(systemRoles).admin,
+    Object.values(systemRoles).superAdmin,
+  ]),
   validation(getUserBrandsSchema),
   getUserBrands
 );
@@ -54,13 +60,19 @@ brandRouter
     getBrandById
   )
   .put(
-    auth(["admin", "superAdmin"]),
+    auth([
+      Object.values(systemRoles).admin,
+      Object.values(systemRoles).superAdmin,
+    ]),
     multerMiddleware(["image/png", "image/jpg", "image/jpeg"]).single("image"),
     validation(updateBrandSchema),
     updateBrand
   )
   .delete(
-    auth(["admin", "superAdmin"]),
+    auth([
+      Object.values(systemRoles).admin,
+      Object.values(systemRoles).superAdmin,
+    ]),
     validation(deleteBrandSchema),
     deleteBrand
   );

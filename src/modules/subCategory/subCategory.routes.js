@@ -26,7 +26,10 @@ const subCategoryRouter = Router({ mergeParams: true });
 subCategoryRouter
   .route("/")
   .post(
-    auth(["admin", "superAdmin"]),
+    auth([
+      Object.values(systemRoles).admin,
+      Object.values(systemRoles).superAdmin,
+    ]),
     multerMiddleware(["image/png", "image/jpg", "image/jpeg"]).single("image"),
     validation(createSubCategSchema),
     createSubCategory
@@ -37,15 +40,18 @@ subCategoryRouter
     getAllSubCategories
   );
 
-// ================================ get user coupons ======================================
+// ================================ get user subCategories ======================================
 subCategoryRouter.get(
   "/user",
-  auth(["admin", "superAdmin"]),
+  auth([
+    Object.values(systemRoles).admin,
+    Object.values(systemRoles).superAdmin,
+  ]),
   validation(getUserSubCategsSchema),
   getUserSubCategories
 );
 
-// ============================ update, delete and get coupon =============================
+// ============================ update, delete and get subCategory =============================
 subCategoryRouter
   .route("/:subCategoryId")
   .get(
@@ -54,13 +60,19 @@ subCategoryRouter
     getSubCategById
   )
   .put(
-    auth(["admin", "superAdmin"]),
+    auth([
+      Object.values(systemRoles).admin,
+      Object.values(systemRoles).superAdmin,
+    ]),
     multerMiddleware(["image/png", "image/jpg", "image/jpeg"]).single("image"),
     validation(updateSubCategSchema),
     updateSubCategory
   )
   .delete(
-    auth(["admin", "superAdmin"]),
+    auth([
+      Object.values(systemRoles).admin,
+      Object.values(systemRoles).superAdmin,
+    ]),
     validation(deleteSubCategSchema),
     deleteSubCategory
   );
