@@ -63,7 +63,7 @@ export const deleteCartItem = asyncHandler(async (req, res, next) => {
   const { cartExists } = req.cart;
 
   cartExists.products = cartExists.products.filter((product) => {
-    return product.productId !== productId;
+    return product.productId.toString() !== productId;
   });
 
   await cartExists.save();
