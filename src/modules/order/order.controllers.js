@@ -53,7 +53,7 @@ export const createOrder = asyncHandler(async (req, res, next) => {
   let finalOrderProducts = [];
   let orderPrice = 0;
 
-  orderProducts.forEach(async (product) => {
+  for (let product of orderProducts) {
     const checkProduct = await Product.findById(product.productId);
 
     if (!checkProduct) return next(new AppError("product not found", 404));
@@ -65,7 +65,7 @@ export const createOrder = asyncHandler(async (req, res, next) => {
     product.finalPrice = checkProduct.finalPrice * product.quantity;
     orderPrice += product.finalPrice;
     finalOrderProducts.push(product);
-  });
+  }
 
   const order = new Order({
     user: req.user._id,
