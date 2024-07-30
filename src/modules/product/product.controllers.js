@@ -215,6 +215,22 @@ export const deleteProduct = asyncHandler(async (req, res, next) => {
 
   if (!product) return next(new AppError("product not found", 404));
 
+  const subCategoryExist = await SubCategory.findById(product.subCategory);
+  const categoryExist = await Category.findById(product.category);
+
+  await cloudinary.api.delete_resources_by_prefix(
+    `E-Commerce_NodeC42/categories/${categoryExist.folderId}/subCategories/${subCategoryExist.folderId}/products/${product.folderId}`
+  );
+  await cloudinary.api.delete_resources_by_prefix(
+    `E-Commerce_NodeC42/categories/${categoryExist.folderId}/subCategories/${subCategoryExist.folderId}/products/${product.folderId}/coverImages`
+  );
+  await cloudinary.api.delete_folder(
+    `E-Commerce_NodeC42/categories/${categoryExist.folderId}/subCategories/${subCategoryExist.folderId}/products/${product.folderId}/coverImages`
+  );
+  await cloudinary.api.delete_folder(
+    `E-Commerce_NodeC42/categories/${categoryExist.folderId}/subCategories/${subCategoryExist.folderId}/products/${product.folderId}`
+  );
+
   res.json({ message: "success" });
 });
 
