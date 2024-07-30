@@ -47,10 +47,12 @@ export const updateCart = asyncHandler(async (req, res, next) => {
     return next(new AppError("product not exist or out of stock", 404));
 
   for (const product of cartExists.products) {
-    if (product.productId === productId) {
+    if (product.productId.toString() === productId) {
       product.quantity = quantity;
     }
   }
+
+  await cartExists.save();
 
   res.json({ message: "success", data: cartExists });
 });
