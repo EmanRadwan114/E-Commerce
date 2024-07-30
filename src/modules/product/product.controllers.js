@@ -98,8 +98,6 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
 
   const { productId } = req.params;
 
-  let categoryExist, subCategoryExist;
-
   const product = await Product.findOne({
     _id: productId,
     createdBy: req.user._id,
@@ -107,7 +105,7 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
   if (!product) return next(new AppError("product not found", 404));
 
   if (category) {
-    categoryExist = await Category.findById(category);
+    const categoryExist = await Category.findById(category);
     if (!categoryExist) return next(new AppError("category not found", 404));
     product.category = category;
   }
@@ -117,7 +115,7 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
     product.brand = brand;
   }
   if (subCategory) {
-    subCategoryExist = await SubCategory.findById(subCategory);
+    const subCategoryExist = await SubCategory.findById(subCategory);
     if (!subCategoryExist)
       return next(new AppError("subCategory not found", 404));
     product.subCategory = subCategory;
@@ -167,13 +165,16 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
   }
 
   if (req.files) {
+    const productCategory = await Category.findById(product.category);
+    const productSubCategory = await SubCategory.findById(product.subCategory);
+
     if (req.files.image) {
       await cloudinary.uploader.destroy(product.image.public_id);
 
       const { secure_url, public_id } = await cloudinary.uploader.upload(
         req.files.image[0].path,
         {
-          folder: `E-Commerce_NodeC42/categories/${categoryExist?.folderId}/subCategories/${subCategoryExist?.folderId}/products/${product?.folderId}`,
+          folder: `E-Commerce_NodeC42/categories/${productCategory?.folderId}/subCategories/${productSubCategory?.folderId}/products/${product?.folderId}`,
         }
       );
 
@@ -184,14 +185,14 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
       let coverImgs = [];
 
       await cloudinary.api.delete_resources_by_prefix(
-        `E-Commerce_NodeC42/categories/${categoryExist?.folderId}/subCategories/${subCategoryExist?.folderId}/products/${product?.folderId}/coverImages`
+        `E-Commerce_NodeC42/categories/${productCategory?.folderId}/subCategories/${productSubCategory?.folderId}/products/${product?.folderId}/coverImages`
       );
 
       for (const img of req.files.coverImages) {
         const { secure_url, public_id } = await cloudinary.uploader.upload(
           img.path,
           {
-            folder: `E-Commerce_NodeC42/categories/${categoryExist?.folderId}/subCategories/${subCategoryExist?.folderId}/products/${product?.folderId}/coverImages`,
+            folder: `E-Commerce_NodeC42/categories/${productCategory?.folderId}/subCategories/${productSubCategory?.folderId}/products/${product?.folderId}/coverImages`,
           }
         );
         coverImgs.push({ secure_url, public_id });
