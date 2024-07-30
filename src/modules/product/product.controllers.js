@@ -169,6 +169,7 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
   if (req.files) {
     if (req.files.image) {
       await cloudinary.uploader.destroy(product.image.public_id);
+
       const { secure_url, public_id } = await cloudinary.uploader.upload(
         req.files.image[0].path,
         {
@@ -182,9 +183,9 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
     if (req.files.coverImages) {
       let coverImgs = [];
 
-      for (const productImg of product.coverImages) {
-        await cloudinary.uploader.destroy(productImg.public_id);
-      }
+      await cloudinary.api.delete_resources_by_prefix(
+        `E-Commerce_NodeC42/categories/${categoryExist.folderId}/subCategories/${subCategoryExist.folderId}/products/${product.folderId}/coverImages`
+      );
 
       for (const img of req.files.coverImages) {
         const { secure_url, public_id } = await cloudinary.uploader.upload(
