@@ -35,7 +35,7 @@ we also returned user cart in req.cart key
 cartRouter
   .route("/")
   .post(
-    auth([Object.values(systemRoles).user]),
+    auth([systemRoles.user]),
     validation(addProductToCartSchema),
     addProductToCart
   )
