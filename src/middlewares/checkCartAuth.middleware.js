@@ -16,7 +16,7 @@ const checkCartAuthorization = asyncHandler(async (req, res, next) => {
   )
     return next(new AppError("you are unauthorized", 401));
 
-  req.cart = cartExists;
+  req.cart = { cartExists };
 
   next();
 });
