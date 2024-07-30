@@ -25,10 +25,7 @@ const couponRouter = Router();
 couponRouter
   .route("/")
   .post(
-    auth([
-      Object.values(systemRoles).admin,
-      Object.values(systemRoles).superAdmin,
-    ]),
+    auth([systemRoles.admin, systemRoles.superAdmin]),
     validation(createCouponSchema),
     createCoupon
   )
@@ -41,10 +38,7 @@ couponRouter
 // ================================ get user coupons ======================================
 couponRouter.get(
   "/user",
-  auth([
-    Object.values(systemRoles).admin,
-    Object.values(systemRoles).superAdmin,
-  ]),
+  auth([systemRoles.admin, systemRoles.superAdmin]),
   validation(getUserCouponsSchema),
   getUserCoupons
 );
@@ -58,18 +52,12 @@ couponRouter
     getCouponById
   )
   .put(
-    auth([
-      Object.values(systemRoles).admin,
-      Object.values(systemRoles).superAdmin,
-    ]),
+    auth([systemRoles.admin, systemRoles.superAdmin]),
     validation(updateCouponSchema),
     updateCoupon
   )
   .delete(
-    auth([
-      Object.values(systemRoles).admin,
-      Object.values(systemRoles).superAdmin,
-    ]),
+    auth([systemRoles.admin, systemRoles.superAdmin]),
     validation(deleteCouponSchema),
     deleteCoupon
   );

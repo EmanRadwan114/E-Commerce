@@ -26,10 +26,7 @@ const productRouter = Router();
 productRouter
   .route("/")
   .post(
-    auth([
-      Object.values(systemRoles).admin,
-      Object.values(systemRoles).superAdmin,
-    ]),
+    auth([systemRoles.admin, systemRoles.superAdmin]),
     multerMiddleware(["image/png", "image/jpg", "image/jpeg"]).fields([
       { name: "image", maxCount: 1 },
       { name: "images", maxCount: 5 },
@@ -46,10 +43,7 @@ productRouter
 // ================================ get user product ======================================
 productRouter.get(
   "/user",
-  auth([
-    Object.values(systemRoles).admin,
-    Object.values(systemRoles).superAdmin,
-  ]),
+  auth([systemRoles.admin, systemRoles.superAdmin]),
   validation(getUserProductsSchema),
   getUserProducts
 );
@@ -63,10 +57,7 @@ productRouter
     getProductById
   )
   .put(
-    auth([
-      Object.values(systemRoles).admin,
-      Object.values(systemRoles).superAdmin,
-    ]),
+    auth([systemRoles.admin, systemRoles.superAdmin]),
     multerMiddleware(["image/png", "image/jpg", "image/jpeg"]).fields([
       { name: "image", maxCount: 1 },
       { name: "images", maxCount: 5 },
@@ -75,10 +66,7 @@ productRouter
     updateProduct
   )
   .delete(
-    auth([
-      Object.values(systemRoles).admin,
-      Object.values(systemRoles).superAdmin,
-    ]),
+    auth([systemRoles.admin, systemRoles.superAdmin]),
     validation(deleteProductSchema),
     deleteProduct
   );

@@ -40,10 +40,7 @@ cartRouter
     addProductToCart
   )
   .get(
-    auth([
-      Object.values(systemRoles).admin,
-      Object.values(systemRoles).superAdmin,
-    ]),
+    auth([systemRoles.admin, systemRoles.superAdmin]),
     validation(getAllCartsSchema),
     getAllCarts
   );

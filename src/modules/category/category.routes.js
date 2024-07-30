@@ -30,10 +30,7 @@ categoryRouter.use("/:categoryId/sub-categories", subCategoryRouter);
 categoryRouter
   .route("/")
   .post(
-    auth([
-      Object.values(systemRoles).admin,
-      Object.values(systemRoles).superAdmin,
-    ]),
+    auth([systemRoles.admin, systemRoles.superAdmin]),
     multerMiddleware(["image/png", "image/jpg", "image/jpeg"]).single("image"),
     validation(createCategSchema),
     createCategory
@@ -47,10 +44,7 @@ categoryRouter
 // ================================ get user categories ======================================
 categoryRouter.get(
   "/user",
-  auth([
-    Object.values(systemRoles).admin,
-    Object.values(systemRoles).superAdmin,
-  ]),
+  auth([systemRoles.admin, systemRoles.superAdmin]),
   validation(getUserCategsSchema),
   getUserCategories
 );
@@ -64,19 +58,13 @@ categoryRouter
     getCategoryById
   )
   .put(
-    auth([
-      Object.values(systemRoles).admin,
-      Object.values(systemRoles).superAdmin,
-    ]),
+    auth([systemRoles.admin, systemRoles.superAdmin]),
     multerMiddleware(["image/png", "image/jpg", "image/jpeg"]).single("image"),
     validation(updateCategSchema),
     updateCategory
   )
   .delete(
-    auth([
-      Object.values(systemRoles).admin,
-      Object.values(systemRoles).superAdmin,
-    ]),
+    auth([systemRoles.admin, systemRoles.superAdmin]),
     validation(deleteCategSchema),
     deleteCategory
   );

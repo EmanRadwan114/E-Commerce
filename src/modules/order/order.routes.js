@@ -10,10 +10,6 @@ const orderRouter = Router();
 // ========================== create order ===========================
 orderRouter
   .route("/")
-  .post(
-    auth([Object.values(systemRoles).user]),
-    validation(createOrderSchema),
-    createProduct
-  );
+  .post(auth([systemRoles.user]), validation(createOrderSchema), createProduct);
 
 export default orderRouter;

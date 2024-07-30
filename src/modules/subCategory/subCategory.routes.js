@@ -26,10 +26,7 @@ const subCategoryRouter = Router({ mergeParams: true });
 subCategoryRouter
   .route("/")
   .post(
-    auth([
-      Object.values(systemRoles).admin,
-      Object.values(systemRoles).superAdmin,
-    ]),
+    auth([systemRoles.admin, systemRoles.superAdmin]),
     multerMiddleware(["image/png", "image/jpg", "image/jpeg"]).single("image"),
     validation(createSubCategSchema),
     createSubCategory
@@ -43,10 +40,7 @@ subCategoryRouter
 // ================================ get user subCategories ======================================
 subCategoryRouter.get(
   "/user",
-  auth([
-    Object.values(systemRoles).admin,
-    Object.values(systemRoles).superAdmin,
-  ]),
+  auth([systemRoles.admin, systemRoles.superAdmin]),
   validation(getUserSubCategsSchema),
   getUserSubCategories
 );
@@ -60,19 +54,13 @@ subCategoryRouter
     getSubCategById
   )
   .put(
-    auth([
-      Object.values(systemRoles).admin,
-      Object.values(systemRoles).superAdmin,
-    ]),
+    auth([systemRoles.admin, systemRoles.superAdmin]),
     multerMiddleware(["image/png", "image/jpg", "image/jpeg"]).single("image"),
     validation(updateSubCategSchema),
     updateSubCategory
   )
   .delete(
-    auth([
-      Object.values(systemRoles).admin,
-      Object.values(systemRoles).superAdmin,
-    ]),
+    auth([systemRoles.admin, systemRoles.superAdmin]),
     validation(deleteSubCategSchema),
     deleteSubCategory
   );
