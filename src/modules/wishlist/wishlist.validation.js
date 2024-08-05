@@ -11,7 +11,6 @@ export const createWishlistSchema = {
 export const deleteWishlistSchema = {
   params: Joi.object({
     productId: commonFields.id.required(),
-    wishlistId: commonFields.id.required(),
   }),
   headers: commonFields.headers.required(),
 };
