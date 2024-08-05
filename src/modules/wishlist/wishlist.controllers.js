@@ -3,7 +3,7 @@ import AppError from "../../utils/error handling/AppError.js";
 import Product from "./../../../Database/Models/product.model.js";
 import WishList from "./../../../Database/Models/wishlist.model.js";
 
-// ========================================= create brand =========================================
+// ========================================= create wishlist =========================================
 export const createWishlist = asyncHandler(async (req, res, next) => {
   const { productId } = req.params;
 
@@ -48,11 +48,10 @@ export const updateWishlist = asyncHandler(async (req, res, next) => {});
 
 // ========================================= delete Wishlist ==========================================
 export const deleteWishlist = asyncHandler(async (req, res, next) => {
-  const { wishlistId, productId } = req.params;
+  const { productId } = req.params;
 
   const wishlist = await WishList.findOneAndUpdate(
     {
-      _id: wishlistId,
       user: req.user._id,
     },
     {

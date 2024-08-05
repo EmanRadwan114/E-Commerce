@@ -27,14 +27,11 @@ wishlistRouter
     auth(Object.values(systemRoles)),
     validation(getWishlistsSchema),
     getWishlists
+  )
+  .delete(
+    auth([systemRoles.user]),
+    validation(deleteWishlistSchema),
+    deleteWishlist
   );
-
-// ============================ delete review =============================
-wishlistRouter.delete(
-  "/:wishlistId",
-  auth([systemRoles.user]),
-  validation(deleteWishlistSchema),
-  deleteWishlist
-);
 
 export default wishlistRouter;
