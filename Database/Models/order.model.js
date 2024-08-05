@@ -75,6 +75,7 @@ const schema = new mongoose.Schema(
     },
     reason: {
       type: String,
+      minLength: 3,
     },
   },
   {

@@ -12,3 +12,13 @@ export const createOrderSchema = {
   }),
   headers: commonFields.headers.required(),
 };
+
+export const cancelOrderSchema = {
+  body: Joi.object({
+    reason: Joi.string().min(3),
+  }),
+  params: Joi.object({
+    orderId: commonFields.id.required(),
+  }),
+  headers: commonFields.headers.required(),
+};

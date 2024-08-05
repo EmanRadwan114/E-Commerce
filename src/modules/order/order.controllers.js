@@ -84,5 +84,67 @@ export const createOrder = asyncHandler(async (req, res, next) => {
 
   await order.save();
 
+  if (req.body?.coupon) {
+    await Coupon.updateOne(
+      { _id: req.body.coupon._id },
+      { $push: { usedBy: req.user._id } }
+    );
+  }
+
+  for (const product of finalOrderProducts) {
+    await Product.findByIdAndUpdate(product.productId, {
+      $inc: {
+        stock: -product.quantity,
+      },
+    });
+  }
+
+  if (flag) {
+    await Cart.findOneAndUpdate({ user: req.user._id }, { products: [] });
+  }
+
   res.status(201).json({ message: "success", data: order });
+});
+
+// ========================================= cancel Order ======================================
+
+export const cancelOrder = asyncHandler(async (req, res, next) => {
+  const { orderId } = req.params;
+  const { reason } = req.body;
+
+  const orderExist = await Order.findOne({
+    user: req.user._id,
+    _id: orderId,
+  });
+
+  if (!orderExist) return next(new AppError("order not found", 404));
+
+  if (
+    (orderExist.paymentMethod === "cash" && orderExist.status !== "placed") ||
+    (orderExist.paymentMethod === "card" && orderExist.status !== "waitPayment")
+  ) {
+    return next(new AppError("order can't be canceled", 409));
+  }
+
+  await Order.updateOne(
+    { _id: orderId },
+    { $set: { status: "canceled", canceledBy: req.user._id, reason } }
+  );
+
+  if (orderExist.couponId) {
+    await Coupon.updateOne(
+      { _id: orderExist.couponId },
+      { $pull: { usedBy: req.user._id } }
+    );
+  }
+
+  for (const product of orderExist.products) {
+    await Product.findByIdAndUpdate(product.productId, {
+      $inc: {
+        stock: product.quantity,
+      },
+    });
+  }
+
+  res.json({ message: "success" });
 });

@@ -274,7 +274,28 @@ export const getProductById = asyncHandler(async (req, res, next) => {
 
 // ===================================== get All products  ======================================
 export const getAllProducts = asyncHandler(async (req, res, next) => {
-  const products = await Product.find({})
+  // pagination
+  const page = +req.query.page || 1;
+  if (page > 1) page = 1;
+  const limit = 2;
+  const skip = (page - 1) * limit;
+
+  // filter
+  const excludeQuery = ["page", "sort", "search", "select"];
+  let filterQuery = { ...req.query };
+  excludeQuery.forEach((el) => delete filterQuery[el]);
+  filterQuery = JSON.parse(
+    JSON.stringify(filterQuery).replace(
+      /\b(gte|gt|lte|lt)\b/g,
+      (match) => `$${match}`
+    )
+  );
+
+  console.log(req.query, filterQuery);
+
+  const mongooseQuery = await Product.find(filterQuery)
+    .skip(skip)
+    .limit(limit)
     .populate([
       {
         path: "createdBy",
@@ -292,14 +313,28 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
         path: "subCategory",
         select: "name image -_id",
       },
-    ])
-    .select(
-      "title description price discount stock finalPrice image coverImages -_id"
-    );
+    ]);
 
-  if (!products) return next(new AppError("no products found", 404));
+  if (!mongooseQuery) return next(new AppError("no products found", 404));
 
-  res.json({ message: "success", data: products });
+  // sort
+  if (req.query.sort) mongooseQuery.sort(req.query.sort.replaceAll(",", " "));
+
+  // select
+  if (req.query.select)
+    mongooseQuery.select(req.query.select.replaceAll(",", " "));
+
+  // search
+  if (req.query.search) {
+    mongooseQuery.find({
+      $or: [
+        { title: { $regex: req.query.search, $options: "i" } },
+        { description: { $regex: req.query.search, $options: "i" } },
+      ],
+    });
+  }
+
+  res.json({ message: "success", page, data: mongooseQuery });
 });
 
 // ===================================== get All products for specific user ======================================

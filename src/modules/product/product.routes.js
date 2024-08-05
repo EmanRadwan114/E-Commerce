@@ -3,6 +3,8 @@ import auth from "./../../middlewares/auth.middleware.js";
 import multerMiddleware from "./../../middlewares/multer.middleware.js";
 import validation from "./../../middlewares/validation.middleware.js";
 import systemRoles from "./../../utils/systemRoles.js";
+import reviewRouter from "./../review/review.routes.js";
+import wishlistRouter from "./../wishlist/wishlist.routes.js";
 import {
   createProduct,
   deleteProduct,
@@ -70,5 +72,9 @@ productRouter
     validation(deleteProductSchema),
     deleteProduct
   );
+
+// =============================== merge params with review and wishlist =============================
+productRouter.use("/:productId/reviews", reviewRouter);
+productRouter.use("/:productId/wishlist", wishlistRouter);
 
 export default productRouter;
