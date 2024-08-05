@@ -28,7 +28,7 @@ wishlistRouter
     validation(getWishlistsSchema),
     getWishlists
   )
-  .delete(
+  .put(
     auth([systemRoles.user]),
     validation(deleteWishlistSchema),
     deleteWishlist
