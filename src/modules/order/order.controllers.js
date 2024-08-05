@@ -126,7 +126,7 @@ export const cancelOrder = asyncHandler(async (req, res, next) => {
     return next(new AppError("order can't be canceled", 409));
   }
 
-  await Order.updateOne(
+  const order = await Order.updateOne(
     { _id: orderId },
     { $set: { status: "canceled", canceledBy: req.user._id, reason } }
   );
@@ -146,5 +146,5 @@ export const cancelOrder = asyncHandler(async (req, res, next) => {
     });
   }
 
-  res.json({ message: "success" });
+  res.json({ message: "success", date: order });
 });

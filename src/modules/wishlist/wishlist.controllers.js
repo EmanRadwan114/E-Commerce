@@ -17,6 +17,9 @@ export const createWishlist = asyncHandler(async (req, res, next) => {
       user: req.user._id,
       products: [productId],
     });
+
+    await newWishlist.save();
+
     return res.status(201).json({
       status: "success",
       data: newWishlist,
