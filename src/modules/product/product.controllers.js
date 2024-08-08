@@ -7,6 +7,7 @@ import Category from "./../../../Database/Models/category.model.js";
 import SubCategory from "./../../../Database/Models/subCategory.model.js";
 import Brand from "../../../Database/Models/brand.model.js";
 import Product from "../../../Database/Models/product.model.js";
+import ApiFeatures from "../../utils/apiFeatures.js";
 
 // ========================================= create product =========================================
 export const createProduct = asyncHandler(async (req, res, next) => {
@@ -135,40 +136,31 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
     });
   }
 
-  if (discount) {
-    if (product.discount == discount)
-      return next(new AppError("product discount should be different", 409));
-
+  if (price & discount) {
+    product.price = price;
+    product.discount = discount;
+    product.finalPrice = price - price * (discount / 100);
+  } else if (price) {
+    product.price = price;
+    product.finalPrice = price - price * (product.discount / 100);
+  } else if (discount) {
     product.discount = discount;
     product.finalPrice = product.price - product.price * (discount / 100);
   }
 
-  if (price) {
-    if (product.price == price)
-      return next(new AppError("product price should be different", 409));
-
-    product.price = price;
-  }
-
   if (description) {
-    if (product.description === description)
-      return next(new AppError("product description should be different", 409));
-
     product.description = description;
   }
 
   if (stock) {
-    if (product.stock == stock)
-      return next(new AppError("product stock should be different", 409));
-
-    product.stock = stock;
+    product.stock = +stock;
   }
 
   if (req.files) {
     const productCategory = await Category.findById(product.category);
     const productSubCategory = await SubCategory.findById(product.subCategory);
 
-    if (req.files.image) {
+    if (req.files.image.length) {
       await cloudinary.uploader.destroy(product.image.public_id);
 
       const { secure_url, public_id } = await cloudinary.uploader.upload(
@@ -181,7 +173,7 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
       product.image = { secure_url, public_id };
     }
 
-    if (req.files.coverImages) {
+    if (req.files.coverImages.length) {
       let coverImgs = [];
 
       await cloudinary.api.delete_resources_by_prefix(
@@ -274,67 +266,17 @@ export const getProductById = asyncHandler(async (req, res, next) => {
 
 // ===================================== get All products  ======================================
 export const getAllProducts = asyncHandler(async (req, res, next) => {
-  // pagination
-  const page = +req.query.page || 1;
-  if (page > 1) page = 1;
-  const limit = 2;
-  const skip = (page - 1) * limit;
+  const apiFeatures = new ApiFeatures(Product.find(), req.query)
+    .pagination()
+    .filter()
+    .sort()
+    .select()
+    .search();
 
-  // filter
-  const excludeQuery = ["page", "sort", "search", "select"];
-  let filterQuery = { ...req.query };
-  excludeQuery.forEach((el) => delete filterQuery[el]);
-  filterQuery = JSON.parse(
-    JSON.stringify(filterQuery).replace(
-      /\b(gte|gt|lte|lt)\b/g,
-      (match) => `$${match}`
-    )
-  );
-
-  console.log(req.query, filterQuery);
-
-  const mongooseQuery = await Product.find(filterQuery)
-    .skip(skip)
-    .limit(limit)
-    .populate([
-      {
-        path: "createdBy",
-        select: "name -_id",
-      },
-      {
-        path: "category",
-        select: "name image -_id",
-      },
-      {
-        path: "brand",
-        select: "name image -_id",
-      },
-      {
-        path: "subCategory",
-        select: "name image -_id",
-      },
-    ]);
-
+  const products = await apiFeatures.mongooseQuery;
   if (!mongooseQuery) return next(new AppError("no products found", 404));
 
-  // sort
-  if (req.query.sort) mongooseQuery.sort(req.query.sort.replaceAll(",", " "));
-
-  // select
-  if (req.query.select)
-    mongooseQuery.select(req.query.select.replaceAll(",", " "));
-
-  // search
-  if (req.query.search) {
-    mongooseQuery.find({
-      $or: [
-        { title: { $regex: req.query.search, $options: "i" } },
-        { description: { $regex: req.query.search, $options: "i" } },
-      ],
-    });
-  }
-
-  res.json({ message: "success", page, data: mongooseQuery });
+  res.json({ message: "success", page: apiFeatures.page, data: products });
 });
 
 // ===================================== get All products for specific user ======================================
