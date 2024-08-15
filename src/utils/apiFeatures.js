@@ -5,7 +5,7 @@ export default class ApiFeatures {
   }
 
   pagination() {
-    const page = +this.query.page || 1;
+    let page = +this.query.page || 1;
     if (page > 1) page = 1;
     const limit = 2;
     const skip = (page - 1) * limit;
