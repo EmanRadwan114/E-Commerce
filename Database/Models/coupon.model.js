@@ -21,7 +21,7 @@ const schema = new mongoose.Schema(
       required: [true, "coupon owner is required"],
       ref: "User",
     },
-    userBy: [
+    usedBy: [
       {
         type: mongoose.Types.ObjectId,
         ref: "User",

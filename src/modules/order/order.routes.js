@@ -2,15 +2,38 @@ import { Router } from "express";
 import auth from "./../../middlewares/auth.middleware.js";
 import validation from "./../../middlewares/validation.middleware.js";
 import systemRoles from "./../../utils/systemRoles.js";
-import { cancelOrderSchema, createOrderSchema } from "./order.validation.js";
-import { cancelOrder, createOrder } from "./order.controllers.js";
+import {
+  cancelOrderSchema,
+  createOrderSchema,
+  getAllOrdersSchema,
+  getUserOrdersSchema,
+} from "./order.validation.js";
+import {
+  cancelOrder,
+  createOrder,
+  getAllOrders,
+  getUserOrders,
+} from "./order.controllers.js";
 
 const orderRouter = Router();
 
 // ========================== create order ===========================
 orderRouter
   .route("/")
-  .post(auth([systemRoles.user]), validation(createOrderSchema), createOrder);
+  .post(auth([systemRoles.user]), validation(createOrderSchema), createOrder)
+  .get(
+    auth(Object.values(systemRoles)),
+    validation(getAllOrdersSchema),
+    getAllOrders
+  );
+
+// ================================ get user orders ======================================
+orderRouter.get(
+  "/user",
+  auth(Object.values(systemRoles)),
+  validation(getUserOrdersSchema),
+  getUserOrders
+);
 
 // ========================== cancel /update order =============================
 orderRouter.put(
@@ -19,5 +42,7 @@ orderRouter.put(
   validation(cancelOrderSchema),
   cancelOrder
 );
+
+//
 
 export default orderRouter;

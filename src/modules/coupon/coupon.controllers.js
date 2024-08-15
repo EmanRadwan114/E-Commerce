@@ -1,6 +1,7 @@
 import asyncHandler from "./../../utils/error handling/asyncHandler.js";
 import AppError from "../../utils/error handling/AppError.js";
 import Coupon from "./../../../Database/Models/coupon.model.js";
+import ApiFeatures from "../../utils/apiFeatures.js";
 
 // ========================================= create coupon =========================================
 export const createCoupon = asyncHandler(async (req, res, next) => {
@@ -87,18 +88,47 @@ export const getCouponById = asyncHandler(async (req, res, next) => {
 
 // ===================================== get All coupons ======================================
 export const getAllCoupons = asyncHandler(async (req, res, next) => {
-  const coupons = await Coupon.find({});
+  const apiFeatures = new ApiFeatures(
+    Coupon.find()
+      .populate([
+        {
+          path: "createdBy",
+          select: "name -_id",
+        },
+      ])
+      .select("code amount fromDate expiryDate -_id"),
+    req.query
+  )
+    .pagination()
+    .filter()
+    .sort()
+    .select()
+    .search();
+
+  const coupons = await apiFeatures.mongooseQuery;
 
   if (!coupons) return next(new AppError("no coupons found", 404));
 
-  res.json({ message: "success", data: coupons });
+  res.json({ message: "success", page: apiFeatures.page, data: coupons });
 });
 
 // ===================================== get All coupons for specific user ======================================
 export const getUserCoupons = asyncHandler(async (req, res, next) => {
-  const coupons = await Coupon.find({ createdBy: req.user._id });
+  const apiFeatures = new ApiFeatures(
+    Coupon.find({ createdBy: req.user._id }).select(
+      "code amount fromDate expiryDate -_id"
+    ),
+    req.query
+  )
+    .pagination()
+    .filter()
+    .sort()
+    .select()
+    .search();
+
+  const coupons = await apiFeatures.mongooseQuery;
 
   if (!coupons) return next(new AppError("no coupons found", 404));
 
-  res.json({ message: "success", data: coupons });
+  res.json({ message: "success", page: apiFeatures.page, data: coupons });
 });

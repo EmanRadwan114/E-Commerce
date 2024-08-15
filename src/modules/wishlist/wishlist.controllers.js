@@ -2,6 +2,7 @@ import asyncHandler from "./../../utils/error handling/asyncHandler.js";
 import AppError from "../../utils/error handling/AppError.js";
 import Product from "./../../../Database/Models/product.model.js";
 import WishList from "./../../../Database/Models/wishlist.model.js";
+import ApiFeatures from "../../utils/apiFeatures.js";
 
 // ========================================= create wishlist =========================================
 export const createWishlist = asyncHandler(async (req, res, next) => {
@@ -43,10 +44,7 @@ export const createWishlist = asyncHandler(async (req, res, next) => {
   });
 });
 
-// ========================================= update Wishlist ==========================================
-export const updateWishlist = asyncHandler(async (req, res, next) => {});
-
-// ========================================= delete Wishlist ==========================================
+// ========================================= remove product from Wishlist ==========================================
 export const deleteWishlist = asyncHandler(async (req, res, next) => {
   const { productId } = req.params;
 
@@ -70,4 +68,24 @@ export const deleteWishlist = asyncHandler(async (req, res, next) => {
 });
 
 // ===================================== get All Wishlists  ======================================
-export const getWishlists = asyncHandler(async (req, res, next) => {});
+export const getWishlists = asyncHandler(async (req, res, next) => {
+  const apiFeatures = new ApiFeatures(
+    WishList.find({}).populate([
+      {
+        path: "user",
+        select: "name -_id",
+      },
+      {
+        path: "products",
+        select: "title description -_id",
+      },
+    ]),
+    req.query
+  ).pagination();
+
+  const wishlists = await apiFeatures.mongooseQuery;
+
+  if (!wishlists) return next(new AppError("no wishlists found", 404));
+
+  res.json({ message: "success", page: apiFeatures.page, data: wishlists });
+});

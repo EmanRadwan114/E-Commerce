@@ -3,6 +3,7 @@ import AppError from "../../utils/error handling/AppError.js";
 import Product from "./../../../Database/Models/product.model.js";
 import Order from "./../../../Database/Models/order.model.js";
 import Review from "./../../../Database/Models/review.model.js";
+import ApiFeatures from "../../utils/apiFeatures.js";
 
 // ========================================= create Review =========================================
 export const createReview = asyncHandler(async (req, res, next) => {
@@ -71,4 +72,26 @@ export const deleteReview = asyncHandler(async (req, res, next) => {
 });
 
 // ===================================== get All Reviews  ======================================
-export const getAllReviews = asyncHandler(async (req, res, next) => {});
+export const getAllReviews = asyncHandler(async (req, res, next) => {
+  const apiFeatures = new ApiFeatures(
+    Review.find({})
+      .populate([
+        {
+          path: "createdBy",
+          select: "name -_id",
+        },
+        {
+          path: "productId",
+          select: "title description -_id",
+        },
+      ])
+      .select("comment rate -_id"),
+    req.query
+  ).pagination();
+
+  const reviews = await apiFeatures.mongooseQuery;
+
+  if (!reviews) return next(new AppError("no reviews found", 404));
+
+  res.json({ message: "success", page: apiFeatures.page, data: reviews });
+});

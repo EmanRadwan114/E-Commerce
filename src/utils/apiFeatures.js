@@ -49,12 +49,26 @@ export default class ApiFeatures {
 
   search() {
     if (this.query.search) {
-      this.mongooseQuery.find({
-        $or: [
-          { title: { $regex: this.query.search, $options: "i" } },
-          { description: { $regex: this.query.search, $options: "i" } },
-        ],
-      });
+      if (this.mongooseQuery.modelName === "Product") {
+        this.mongooseQuery.find({
+          $or: [
+            { title: { $regex: this.query.search, $options: "i" } },
+            { description: { $regex: this.query.search, $options: "i" } },
+          ],
+        });
+      } else if (
+        this.mongooseQuery.modelName === "Category" ||
+        this.mongooseQuery.modelName === "SubCategory" ||
+        this.mongooseQuery.modelName === "Brand"
+      ) {
+        this.mongooseQuery.find({
+          $or: [{ name: { $regex: this.query.search, $options: "i" } }],
+        });
+      } else if (this.mongooseQuery.modelName === "Coupon") {
+        this.mongooseQuery.find({
+          $or: [{ code: { $regex: this.query.search, $options: "i" } }],
+        });
+      }
     }
     return this;
   }

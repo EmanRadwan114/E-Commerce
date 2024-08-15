@@ -5,6 +5,7 @@ import asyncHandler from "./../../utils/error handling/asyncHandler.js";
 import SubCategory from "./../../../Database/Models/subCategory.model.js";
 import Category from "./../../../Database/Models/category.model.js";
 import AppError from "../../utils/error handling/AppError.js";
+import ApiFeatures from "../../utils/apiFeatures.js";
 
 // ======================================== create sub-category ========================================
 export const createSubCategory = asyncHandler(async (req, res, next) => {
@@ -170,22 +171,33 @@ export const getAllSubCategories = asyncHandler(async (req, res, next) => {
   const category = await Category.findById(categoryId);
   if (!category) return next(new AppError("category not found", 404));
 
-  const subCategories = await SubCategory.find()
-    .populate([
-      {
-        path: "category",
-        select: "name slug image -_id",
-      },
-      {
-        path: "createdBy",
-        select: "name -_id",
-      },
-    ])
-    .select("name image slug -_id");
+  const apiFeatures = new ApiFeatures(
+    SubCategory.find()
+      .populate([
+        {
+          path: "category",
+          select: "name slug image -_id",
+        },
+        {
+          path: "createdBy",
+          select: "name -_id",
+        },
+      ])
+      .select("name image slug -_id"),
+    req.query
+  )
+    .pagination()
+    .filter()
+    .sort()
+    .select()
+    .search();
+
+  const subCategories = await apiFeatures.mongooseQuery;
+
   if (!subCategories)
     return next(new AppError("no sub-categories found for this category", 404));
 
-  res.json({ message: "success", data: subCategories });
+  res.json({ message: "success", page: apiFeatures.page, data: subCategories });
 });
 
 // ===================================== get All subCategories for specific user ======================================
@@ -195,23 +207,33 @@ export const getUserSubCategories = asyncHandler(async (req, res, next) => {
   const category = await Category.findById(categoryId);
   if (!category) return next(new AppError("category not found", 404));
 
-  const subCategories = await SubCategory.find({
-    createdBy: req.user._id,
-    category: categoryId,
-  })
-    .populate([
-      {
-        path: "category",
-        select: "name slug image -_id",
-      },
-      {
-        path: "createdBy",
-        select: "name -_id",
-      },
-    ])
-    .select("name image slug -_id");
+  const apiFeatures = new ApiFeatures(
+    SubCategory.find({
+      createdBy: req.user._id,
+      category: categoryId,
+    })
+      .populate([
+        {
+          path: "category",
+          select: "name slug image -_id",
+        },
+        {
+          path: "createdBy",
+          select: "name -_id",
+        },
+      ])
+      .select("name image slug -_id"),
+    req.query
+  )
+    .pagination()
+    .filter()
+    .sort()
+    .select()
+    .search();
+
+  const subCategories = await apiFeatures.mongooseQuery;
 
   if (!subCategories) return next(new AppError("no subCategories found", 404));
 
-  res.json({ message: "success", data: subCategories });
+  res.json({ message: "success", page: apiFeatures.page, data: subCategories });
 });

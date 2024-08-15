@@ -4,6 +4,7 @@ import cloudinary from "./../../utils/cloudinary/cloudinary.js";
 import asyncHandler from "./../../utils/error handling/asyncHandler.js";
 import AppError from "../../utils/error handling/AppError.js";
 import Brand from "./../../../Database/Models/brand.model.js";
+import ApiFeatures from "../../utils/apiFeatures.js";
 
 // ========================================= create brand =========================================
 export const createBrand = asyncHandler(async (req, res, next) => {
@@ -123,18 +124,38 @@ export const getBrandById = asyncHandler(async (req, res, next) => {
 
 // ===================================== get All brands  ======================================
 export const getAllBrands = asyncHandler(async (req, res, next) => {
-  const brands = await Brand.find().select("name slug image");
+  const apiFeatures = new ApiFeatures(
+    Brand.find().select("name slug image -_id"),
+    req.query
+  )
+    .pagination()
+    .filter()
+    .sort()
+    .select()
+    .search();
+
+  const brands = await apiFeatures.mongooseQuery;
 
   if (!brands) return next(new AppError("no brands found", 404));
 
-  res.json({ message: "success", data: brands });
+  res.json({ message: "success", page: apiFeatures.page, data: brands });
 });
 
 // ===================================== get All brands for specific user ======================================
 export const getUserBrands = asyncHandler(async (req, res, next) => {
-  const brands = await Brand.find({ createdBy: req.user._id });
+  const apiFeatures = new ApiFeatures(
+    Brand.find({ createdBy: req.user._id }).select("name slug image -_id"),
+    req.query
+  )
+    .pagination()
+    .filter()
+    .sort()
+    .select()
+    .search();
+
+  const brands = await apiFeatures.mongooseQuery;
 
   if (!brands) return next(new AppError("no brands found", 404));
 
-  res.json({ message: "success", data: brands });
+  res.json({ message: "success", page: apiFeatures.page, data: brands });
 });

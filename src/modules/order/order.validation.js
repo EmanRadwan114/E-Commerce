@@ -22,3 +22,11 @@ export const cancelOrderSchema = {
   }),
   headers: commonFields.headers.required(),
 };
+
+export const getUserOrdersSchema = {
+  headers: commonFields.headers.required(),
+};
+
+export const getAllOrdersSchema = {
+  headers: commonFields.headers.required(),
+};

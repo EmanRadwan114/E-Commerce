@@ -5,6 +5,7 @@ import cloudinary from "./../../utils/cloudinary/cloudinary.js";
 import asyncHandler from "./../../utils/error handling/asyncHandler.js";
 import AppError from "../../utils/error handling/AppError.js";
 import SubCategory from "../../../Database/Models/subCategory.model.js";
+import ApiFeatures from "../../utils/apiFeatures.js";
 
 // ========================================= create category =========================================
 export const createCategory = asyncHandler(async (req, res, next) => {
@@ -129,28 +130,50 @@ export const getCategoryById = asyncHandler(async (req, res, next) => {
 
 // ==================== get All categories with their related sub-categories ====================
 export const getAllCategories = asyncHandler(async (req, res, next) => {
-  const categories = await Category.find().populate([
-    {
-      path: "subCategories",
-      select: "name slug image -_id -category",
-    },
-    {
-      path: "createdBy",
-      select: "name -_id",
-    },
-  ]);
+  const apiFeatures = new ApiFeatures(
+    Category.find()
+      .populate([
+        {
+          path: "subCategories",
+          select: "name slug image -_id -category",
+        },
+        {
+          path: "createdBy",
+          select: "name -_id",
+        },
+      ])
+      .select("name slug image -_id"),
+    req.query
+  )
+    .pagination()
+    .filter()
+    .sort()
+    .select()
+    .search();
+
+  const categories = await apiFeatures.mongooseQuery;
 
   if (!categories)
     return next(new AppError("no categories found for this category", 404));
 
-  res.json({ message: "success", data: categories });
+  res.json({ message: "success", page: apiFeatures.page, data: categories });
 });
 
 // ===================================== get All categories for specific user ======================================
 export const getUserCategories = asyncHandler(async (req, res, next) => {
-  const categories = await Category.find({ createdBy: req.user._id });
+  const apiFeatures = new ApiFeatures(
+    Category.find({ createdBy: req.user._id }).select("name slug image -_id"),
+    req.query
+  )
+    .pagination()
+    .filter()
+    .sort()
+    .select()
+    .search();
+
+  const categories = await apiFeatures.mongooseQuery;
 
   if (!categories) return next(new AppError("no categories found", 404));
 
-  res.json({ message: "success", data: categories });
+  res.json({ message: "success", page: apiFeatures.page, data: categories });
 });

@@ -4,6 +4,7 @@ import Cart from "./../../../Database/Models/cart.model.js";
 import Product from "../../../Database/Models/product.model.js";
 import Order from "./../../../Database/Models/order.model.js";
 import Coupon from "./../../../Database/Models/coupon.model.js";
+import ApiFeatures from "../../utils/apiFeatures.js";
 
 // ========================================= create product =========================================
 export const createOrder = asyncHandler(async (req, res, next) => {
@@ -147,4 +148,46 @@ export const cancelOrder = asyncHandler(async (req, res, next) => {
   }
 
   res.json({ message: "success", date: order });
+});
+
+// ===================================== get All orders  ======================================
+export const getAllOrders = asyncHandler(async (req, res, next) => {
+  const apiFeatures = new ApiFeatures(
+    Order.find({})
+      .populate([
+        {
+          path: "user",
+          select: "name -_id",
+        },
+      ])
+      .select("products orderPrice priceAfterDiscount status -_id"),
+    req.query
+  ).pagination();
+
+  const orders = await apiFeatures.mongooseQuery;
+
+  if (!orders) return next(new AppError("no orders found", 404));
+
+  res.json({ message: "success", page: apiFeatures.page, data: orders });
+});
+
+// ===================================== get user orders ======================================
+export const getUserOrders = asyncHandler(async (req, res, next) => {
+  const apiFeatures = new ApiFeatures(
+    Order.find({ user: req.user._id })
+      .populate([
+        {
+          path: "user",
+          select: "name -_id",
+        },
+      ])
+      .select("products orderPrice priceAfterDiscount status -_id"),
+    req.query
+  ).pagination();
+
+  const orders = await apiFeatures.mongooseQuery;
+
+  if (!orders) return next(new AppError("no orders found", 404));
+
+  res.json({ message: "success", page: apiFeatures.page, data: orders });
 });

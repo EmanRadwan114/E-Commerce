@@ -7,7 +7,7 @@ import Category from "./../../../Database/Models/category.model.js";
 import SubCategory from "./../../../Database/Models/subCategory.model.js";
 import Brand from "../../../Database/Models/brand.model.js";
 import Product from "../../../Database/Models/product.model.js";
-import ApiFeatures from "./../../utils/apiFeatures.js";
+import ApiFeatures from "../../utils/apiFeatures.js";
 
 // ========================================= create product =========================================
 export const createProduct = asyncHandler(async (req, res, next) => {
@@ -336,5 +336,5 @@ export const getUserProducts = asyncHandler(async (req, res, next) => {
 
   if (!products) return next(new AppError("no products found", 404));
 
-  res.json({ message: "success", data: products });
+  res.json({ message: "success", page: apiFeatures.page, data: products });
 });
