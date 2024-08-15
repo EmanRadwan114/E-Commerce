@@ -267,24 +267,28 @@ export const getProductById = asyncHandler(async (req, res, next) => {
 // ===================================== get All products  ======================================
 export const getAllProducts = asyncHandler(async (req, res, next) => {
   const apiFeatures = new ApiFeatures(
-    Product.find().populate([
-      {
-        path: "createdBy",
-        select: "name -_id",
-      },
-      {
-        path: "category",
-        select: "name image -_id",
-      },
-      {
-        path: "brand",
-        select: "name image -_id",
-      },
-      {
-        path: "subCategory",
-        select: "name image -_id",
-      },
-    ]),
+    Product.find()
+      .populate([
+        {
+          path: "createdBy",
+          select: "name -_id",
+        },
+        {
+          path: "category",
+          select: "name image -_id",
+        },
+        {
+          path: "brand",
+          select: "name image -_id",
+        },
+        {
+          path: "subCategory",
+          select: "name image -_id",
+        },
+      ])
+      .select(
+        "title description price discount stock finalPrice image coverImages -_id"
+      ),
     req.query
   )
     .pagination()
@@ -302,20 +306,24 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
 // ===================================== get All products for specific user ======================================
 export const getUserProducts = asyncHandler(async (req, res, next) => {
   const apiFeatures = new ApiFeatures(
-    Product.find({ createdBy: req.user._id }).populate([
-      {
-        path: "category",
-        select: "name image -_id",
-      },
-      {
-        path: "brand",
-        select: "name image -_id",
-      },
-      {
-        path: "subCategory",
-        select: "name image -_id",
-      },
-    ]),
+    Product.find({ createdBy: req.user._id })
+      .populate([
+        {
+          path: "category",
+          select: "name image -_id",
+        },
+        {
+          path: "brand",
+          select: "name image -_id",
+        },
+        {
+          path: "subCategory",
+          select: "name image -_id",
+        },
+      ])
+      .select(
+        "title description price discount stock finalPrice image coverImages -_id"
+      ),
     req.query
   )
     .pagination()
