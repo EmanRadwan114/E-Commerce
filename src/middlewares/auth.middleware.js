@@ -1,9 +1,10 @@
 import jwt from "jsonwebtoken";
 import AppError from "../utils/error handling/AppError.js";
 import User from "../../Database/Models/user.model.js";
+import asyncHandler from "../utils/error handling/asyncHandler.js";
 
 const auth = (roles = []) => {
-  return async (req, res, next) => {
+  return asyncHandler(async (req, res, next) => {
     // authentication
     const { token } = req.headers;
 
@@ -23,7 +24,7 @@ const auth = (roles = []) => {
 
     req.user = user;
     next();
-  };
+  });
 };
 
 export default auth;
