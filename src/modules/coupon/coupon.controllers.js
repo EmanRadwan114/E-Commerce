@@ -21,6 +21,11 @@ export const createCoupon = asyncHandler(async (req, res, next) => {
 
   await newCoupon.save();
 
+  req.data = {
+    model: Coupon,
+    id: newCoupon._id,
+  };
+
   if (!newCoupon) return next(new AppError("coupon not created", 500));
 
   res.status(201).json({

@@ -24,6 +24,11 @@ export const signup = asyncHandler(async (req, res, next) => {
   });
   await user.save();
 
+  req.data = {
+    model: User,
+    id: user._id,
+  };
+
   if (!user)
     return next(
       new AppError("something went wrong in the sign up process", 500)

@@ -23,6 +23,7 @@ export const createCategory = asyncHandler(async (req, res, next) => {
       folder: `E-Commerce_NodeC42/categories/${folderId}`,
     }
   );
+  req.filePath = `E-Commerce_NodeC42/categories/${folderId}`;
 
   const newCategory = new Category({
     name: name.toLowerCase(),
@@ -39,6 +40,11 @@ export const createCategory = asyncHandler(async (req, res, next) => {
   });
 
   await newCategory.save();
+
+  req.data = {
+    model: Category,
+    id: newCategory._id,
+  };
 
   return res.status(201).json({
     message: "success",
@@ -80,6 +86,7 @@ export const updateCategory = asyncHandler(async (req, res, next) => {
         folder: `E-Commerce_NodeC42/categories/${category.folderId}`,
       }
     );
+
     category.image = {
       secure_url,
       public_id,

@@ -23,6 +23,8 @@ export const createBrand = asyncHandler(async (req, res, next) => {
     }
   );
 
+  req.filePath = `E-Commerce_NodeC42/brands/${folderId}`;
+
   const newBrand = new Brand({
     name: name.toLowerCase(),
     slug: slugify(name, {
@@ -38,6 +40,11 @@ export const createBrand = asyncHandler(async (req, res, next) => {
   });
 
   await newBrand.save();
+
+  req.data = {
+    model: Brand,
+    id: newBrand._id,
+  };
 
   return res.status(201).json({
     message: "success",
@@ -79,6 +86,7 @@ export const updateBrand = asyncHandler(async (req, res, next) => {
         folder: `E-Commerce_NodeC42/brands/${brand.folderId}`,
       }
     );
+
     brand.image = {
       secure_url,
       public_id,

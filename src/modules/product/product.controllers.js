@@ -56,6 +56,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
       folder: `E-Commerce_NodeC42/categories/${categoryExist.folderId}/subCategories/${subCategoryExist.folderId}/products/${folderId}`,
     }
   );
+  req.filePath = `E-Commerce_NodeC42/categories/${categoryExist.folderId}/subCategories/${subCategoryExist.folderId}/products/${folderId}`;
 
   const newProduct = new Product({
     title: title.toLowerCase(),
@@ -80,6 +81,11 @@ export const createProduct = asyncHandler(async (req, res, next) => {
   if (!newProduct) return next(new AppError("product is not created", 404));
 
   await newProduct.save();
+
+  req.data = {
+    model: Product,
+    id: newProduct._id,
+  };
 
   res.status(201).json({ message: "success", data: newProduct });
 });

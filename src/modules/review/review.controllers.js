@@ -34,6 +34,11 @@ export const createReview = asyncHandler(async (req, res, next) => {
 
   await review.save();
 
+  req.data = {
+    model: Review,
+    id: review._id,
+  };
+
   if (!review._id) return next(new AppError("review is not created", 500));
 
   let sum = productExist.avgRate * productExist.RateNum;

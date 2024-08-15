@@ -26,6 +26,8 @@ export const createSubCategory = asyncHandler(async (req, res, next) => {
     }
   );
 
+  req.filePath = `E-Commerce_NodeC42/categories/${category.folderId}/subCategories/${folderId}`;
+
   const newSubCategory = new SubCategory({
     name: name.toLowerCase(),
     slug: slugify(name, {
@@ -42,6 +44,11 @@ export const createSubCategory = asyncHandler(async (req, res, next) => {
   });
 
   await newSubCategory.save();
+
+  req.data = {
+    model: SubCategory,
+    id: newSubCategory._id,
+  };
 
   return res.status(201).json({
     message: "success",

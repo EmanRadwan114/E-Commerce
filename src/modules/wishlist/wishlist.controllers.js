@@ -21,6 +21,11 @@ export const createWishlist = asyncHandler(async (req, res, next) => {
 
     await newWishlist.save();
 
+    req.data = {
+      model: WishList,
+      id: newWishlist._id,
+    };
+
     return res.status(201).json({
       status: "success",
       data: newWishlist,

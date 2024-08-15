@@ -85,6 +85,11 @@ export const createOrder = asyncHandler(async (req, res, next) => {
 
   await order.save();
 
+  req.data = {
+    model: Order,
+    id: order._id,
+  };
+
   if (req.body?.coupon) {
     await Coupon.updateOne(
       { _id: req.body.coupon._id },

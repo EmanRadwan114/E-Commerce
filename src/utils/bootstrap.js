@@ -10,6 +10,10 @@ import cartRouter from "../modules/cart/cart.routes.js";
 import orderRouter from "../modules/order/order.routes.js";
 import reviewRouter from "../modules/review/review.routes.js";
 import wishlistRouter from "../modules/wishlist/wishlist.routes.js";
+import {
+  deleteFromCloudinary,
+  deleteFromDB,
+} from "./error handling/rollbackDelete.js";
 
 export default function bootstrap(app, express) {
   const PORT = process.env.PORT || 3000;
@@ -34,7 +38,7 @@ export default function bootstrap(app, express) {
     return next(new AppError(`page not found at ${req.originalUrl}`, 404));
   });
 
-  app.use(globalErrHandler);
+  app.use(globalErrHandler, deleteFromCloudinary, deleteFromDB);
 
   // ========================== error outside express ===========================
   process.on("unhandledRejection", (err) => {
