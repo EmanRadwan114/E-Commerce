@@ -7,7 +7,7 @@ import Category from "./../../../Database/Models/category.model.js";
 import SubCategory from "./../../../Database/Models/subCategory.model.js";
 import Brand from "../../../Database/Models/brand.model.js";
 import Product from "../../../Database/Models/product.model.js";
-import ApiFeatures from "../../utils/apiFeatures.js";
+import ApiFeatures from "./../../utils/apiFeatures.js";
 
 // ========================================= create product =========================================
 export const createProduct = asyncHandler(async (req, res, next) => {
@@ -266,23 +266,12 @@ export const getProductById = asyncHandler(async (req, res, next) => {
 
 // ===================================== get All products  ======================================
 export const getAllProducts = asyncHandler(async (req, res, next) => {
-  const apiFeatures = new ApiFeatures(Product.find(), req.query)
-    .pagination()
-    .filter()
-    .sort()
-    .select()
-    .search();
-
-  const products = await apiFeatures.mongooseQuery;
-  if (!mongooseQuery) return next(new AppError("no products found", 404));
-
-  res.json({ message: "success", page: apiFeatures.page, data: products });
-});
-
-// ===================================== get All products for specific user ======================================
-export const getUserProducts = asyncHandler(async (req, res, next) => {
-  const products = await Product.find({ createdBy: req.user._id })
-    .populate([
+  const apiFeatures = new ApiFeatures(
+    Product.find().populate([
+      {
+        path: "createdBy",
+        select: "name -_id",
+      },
       {
         path: "category",
         select: "name image -_id",
@@ -295,10 +284,47 @@ export const getUserProducts = asyncHandler(async (req, res, next) => {
         path: "subCategory",
         select: "name image -_id",
       },
-    ])
-    .select(
-      "title description price discount stock finalPrice image coverImages -_id"
-    );
+    ]),
+    req.query
+  )
+    .pagination()
+    .filter()
+    .sort()
+    .select()
+    .search();
+
+  const products = await apiFeatures.mongooseQuery;
+  if (!products) return next(new AppError("no products found", 404));
+
+  res.json({ message: "success", page: apiFeatures.page, data: products });
+});
+
+// ===================================== get All products for specific user ======================================
+export const getUserProducts = asyncHandler(async (req, res, next) => {
+  const apiFeatures = new ApiFeatures(
+    Product.find({ createdBy: req.user._id }).populate([
+      {
+        path: "category",
+        select: "name image -_id",
+      },
+      {
+        path: "brand",
+        select: "name image -_id",
+      },
+      {
+        path: "subCategory",
+        select: "name image -_id",
+      },
+    ]),
+    req.query
+  )
+    .pagination()
+    .filter()
+    .sort()
+    .select()
+    .search();
+
+  const products = await apiFeatures.mongooseQuery;
 
   if (!products) return next(new AppError("no products found", 404));
 

@@ -10,28 +10,7 @@ export default class ApiFeatures {
     const limit = 2;
     const skip = (page - 1) * limit;
 
-    this.mongooseQuery
-      .find()
-      .skip(skip)
-      .limit(limit)
-      .populate([
-        {
-          path: "createdBy",
-          select: "name -_id",
-        },
-        {
-          path: "category",
-          select: "name image -_id",
-        },
-        {
-          path: "brand",
-          select: "name image -_id",
-        },
-        {
-          path: "subCategory",
-          select: "name image -_id",
-        },
-      ]);
+    this.mongooseQuery.find().skip(skip).limit(limit);
 
     this.page = page;
 
