@@ -31,7 +31,16 @@ export const addProductToCart = asyncHandler(async (req, res, next) => {
       id: cartExist._id,
     };
   } else {
-    cartExist.products.push({ productId, quantity: 1 });
+    let flag = false;
+    cartExist.products.map((product) => {
+      if (product.productId.toString() === productId) {
+        product.quantity += 1;
+        flag = true;
+      }
+    });
+    if (!flag) {
+      cartExist.products.push({ productId, quantity: 1 });
+    }
     await cartExist.save();
   }
 
