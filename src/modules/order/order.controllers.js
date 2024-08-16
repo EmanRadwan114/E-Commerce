@@ -7,7 +7,7 @@ import Coupon from "./../../../Database/Models/coupon.model.js";
 import ApiFeatures from "../../utils/apiFeatures.js";
 import createInvoice from "../../utils/invoice.js";
 
-// ========================================= create product =========================================
+// ========================================= create order =========================================
 export const createOrder = asyncHandler(async (req, res, next) => {
   const { address, phone, paymentMethod, productId, quantity, couponCode } =
     req.body;
@@ -124,6 +124,7 @@ export const createOrder = asyncHandler(async (req, res, next) => {
     date: order.createdAt,
     subtotal: order.orderPrice,
   };
+  console.log(req.data);
 
   await createInvoice(invoice, "../../../public/invoice/invoice.pdf");
 
