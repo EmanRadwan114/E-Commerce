@@ -6,6 +6,7 @@ import Order from "./../../../Database/Models/order.model.js";
 import Coupon from "./../../../Database/Models/coupon.model.js";
 import ApiFeatures from "../../utils/apiFeatures.js";
 import createInvoice from "../../utils/invoice.js";
+import sendEmails from "../../utils/nodemailer/sendEmails.js";
 
 // ========================================= create order =========================================
 export const createOrder = asyncHandler(async (req, res, next) => {
@@ -109,6 +110,10 @@ export const createOrder = asyncHandler(async (req, res, next) => {
     });
   }
 
+  if (flag) {
+    await Cart.findOneAndUpdate({ user: req.user._id }, { products: [] });
+  }
+
   // create invoice
   const invoice = {
     shipping: {
@@ -125,9 +130,13 @@ export const createOrder = asyncHandler(async (req, res, next) => {
 
   await createInvoice(invoice, "./public/invoice/invoice.pdf");
 
-  if (flag) {
-    await Cart.findOneAndUpdate({ user: req.user._id }, { products: [] });
-  }
+  await sendEmails(req.user.email, "order invoice", "", [
+    {
+      path: "./public/invoice/invoice.pdf",
+      name: "invoice.pdf",
+      type: "application/pdf",
+    },
+  ]);
 
   res.status(201).json({ message: "success", data: order });
 });
