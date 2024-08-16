@@ -5,6 +5,7 @@ import Product from "../../../Database/Models/product.model.js";
 import Order from "./../../../Database/Models/order.model.js";
 import Coupon from "./../../../Database/Models/coupon.model.js";
 import ApiFeatures from "../../utils/apiFeatures.js";
+import createInvoice from "../../utils/invoice.js";
 
 // ========================================= create product =========================================
 export const createOrder = asyncHandler(async (req, res, next) => {
@@ -63,6 +64,7 @@ export const createOrder = asyncHandler(async (req, res, next) => {
 
     product.title = checkProduct.title;
     product.price = checkProduct.price;
+    product.priceAfterDiscount = checkProduct.finalPrice;
     product.finalPrice = checkProduct.finalPrice * product.quantity;
     orderPrice += product.finalPrice;
     finalOrderProducts.push(product);
@@ -108,6 +110,22 @@ export const createOrder = asyncHandler(async (req, res, next) => {
   if (flag) {
     await Cart.findOneAndUpdate({ user: req.user._id }, { products: [] });
   }
+
+  // create invoice
+  const invoice = {
+    shipping: {
+      name: req.user.name,
+      address: order.address,
+      country: "Egypt",
+    },
+    items: order.products,
+    paid: order.priceAfterDiscount,
+    invoice_nr: order._id,
+    date: order.createdAt,
+    subtotal: order.orderPrice,
+  };
+
+  await createInvoice(invoice, "../../../public/invoice/invoice.pdf");
 
   res.status(201).json({ message: "success", data: order });
 });
