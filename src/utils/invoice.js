@@ -15,7 +15,7 @@ export default async function createInvoice(invoice, path) {
 
 function generateHeader(doc) {
   doc
-    .image("../../public/assets/logo.png", 50, 45, {
+    .image("./public/assets/logo.png", 50, 45, {
       width: 50,
     })
     .fillColor("#444444")
@@ -44,21 +44,13 @@ function generateCustomerInformation(doc, invoice) {
     .text("Invoice Date:", 50, customerInformationTop + 15)
     .text(formatDate(invoice.date), 150, customerInformationTop + 15)
     .text("Balance Due:", 50, customerInformationTop + 30)
-    .text(invoice.paid, 150, customerInformationTop + 30)
+    .text(`${invoice.paid} EGP`, 150, customerInformationTop + 30)
 
     .font("Helvetica-Bold")
     .text(invoice.shipping.name, 300, customerInformationTop)
     .font("Helvetica")
     .text(invoice.shipping.address, 300, customerInformationTop + 15)
-    .text(
-      invoice.shipping.city +
-        ", " +
-        invoice.shipping.state +
-        ", " +
-        invoice.shipping.country,
-      300,
-      customerInformationTop + 30
-    )
+    .text(invoice.shipping.country, 300, customerInformationTop + 30)
     .moveDown();
 
   generateHr(doc, 252);
@@ -88,10 +80,10 @@ function generateInvoiceTable(doc, invoice) {
       doc,
       position,
       item.title,
-      item.price,
-      item.priceAfterDiscount,
+      `${item.price} EGP`,
+      `${item.priceAfterDiscount} EGP`,
       item.quantity,
-      item.finalPrice
+      `${item.finalPrice} EGP`
     );
 
     generateHr(doc, position + 20);
@@ -105,7 +97,7 @@ function generateInvoiceTable(doc, invoice) {
     "",
     "Subtotal",
     "",
-    invoice.subtotal
+    `${invoice.subtotal} EGP`
   );
 
   const paidToDatePosition = subtotalPosition + 20;
@@ -116,12 +108,20 @@ function generateInvoiceTable(doc, invoice) {
     "",
     "Discount",
     "",
-    invoice.subtotal - invoice.paid
+    `${invoice.subtotal - invoice.paid} EGP`
   );
 
   const duePosition = paidToDatePosition + 25;
   doc.font("Helvetica-Bold");
-  generateTableRow(doc, duePosition, "", "", "Balance Due", "", invoice.paid);
+  generateTableRow(
+    doc,
+    duePosition,
+    "",
+    "",
+    "Balance Due",
+    "",
+    `${invoice.paid} EGP`
+  );
   doc.font("Helvetica");
 }
 

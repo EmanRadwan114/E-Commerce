@@ -30,6 +30,10 @@ const schema = new mongoose.Schema(
           type: Number,
           required: [true, "product final price is required"],
         },
+        priceAfterDiscount: {
+          type: Number,
+          required: [true, "product price after discount is required"],
+        },
       },
     ],
     orderPrice: {

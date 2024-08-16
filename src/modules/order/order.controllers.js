@@ -90,6 +90,8 @@ export const createOrder = asyncHandler(async (req, res, next) => {
   req.data = {
     model: Order,
     id: order._id,
+    coupon: order.couponId,
+    user: order.user,
   };
 
   if (req.body?.coupon) {
@@ -107,10 +109,6 @@ export const createOrder = asyncHandler(async (req, res, next) => {
     });
   }
 
-  if (flag) {
-    await Cart.findOneAndUpdate({ user: req.user._id }, { products: [] });
-  }
-
   // create invoice
   const invoice = {
     shipping: {
@@ -124,9 +122,12 @@ export const createOrder = asyncHandler(async (req, res, next) => {
     date: order.createdAt,
     subtotal: order.orderPrice,
   };
-  console.log(req.data);
 
-  await createInvoice(invoice, "../../../public/invoice/invoice.pdf");
+  await createInvoice(invoice, "./public/invoice/invoice.pdf");
+
+  if (flag) {
+    await Cart.findOneAndUpdate({ user: req.user._id }, { products: [] });
+  }
 
   res.status(201).json({ message: "success", data: order });
 });
