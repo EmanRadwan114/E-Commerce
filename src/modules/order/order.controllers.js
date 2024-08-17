@@ -115,6 +115,10 @@ export const createOrder = asyncHandler(async (req, res, next) => {
     });
   }
 
+  if (flag) {
+    await Cart.findOneAndUpdate({ user: req.user._id }, { products: [] });
+  }
+
   // create invoice
 
   const invoice = {
@@ -170,7 +174,7 @@ export const createOrder = asyncHandler(async (req, res, next) => {
               name: product.title,
               images: [product.image.secure_url],
             },
-            unit_amount: product.finalPrice * 100,
+            unit_amount: product.priceAfterDiscount * 100,
           },
           quantity: product.quantity,
         };
@@ -181,10 +185,6 @@ export const createOrder = asyncHandler(async (req, res, next) => {
       session_url: session.url,
       data: order,
     });
-  }
-
-  if (flag) {
-    await Cart.findOneAndUpdate({ user: req.user._id }, { products: [] });
   }
 
   res.status(201).json({ message: "success", data: order });
