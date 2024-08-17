@@ -14,9 +14,13 @@ export default async function createInvoice(invoice, path) {
   doc.pipe(fs.createWriteStream(path));
 }
 
-function generateHeader(doc) {
+async function generateHeader(doc) {
+  const logo = await fetch("../../public/assets/logo.png").then((res) =>
+    res.arrayBuffer()
+  );
+
   doc
-    .image("../../public/assets/logo.png", 50, 45, {
+    .image(logo, 50, 45, {
       width: 50,
     })
     .fillColor("#444444")
