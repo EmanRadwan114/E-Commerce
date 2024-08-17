@@ -39,16 +39,8 @@ orderRouter.get(
 );
 
 // ================= handle online payment success / cancel =================
-orderRouter.get(
-  "/success/:orderId",
-  auth([systemRoles.user]),
-  handlePaymentSuccess
-);
-orderRouter.get(
-  "/cancel/:orderId",
-  auth([systemRoles.user]),
-  handlePaymentCancel
-);
+orderRouter.get("/success/:orderId", handlePaymentSuccess);
+orderRouter.get("/cancel/:orderId", handlePaymentCancel);
 
 // ========================== create webhook ==================================
 orderRouter.post(
