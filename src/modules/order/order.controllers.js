@@ -11,6 +11,7 @@ import ApiFeatures from "../../utils/apiFeatures.js";
 import createInvoice from "../../utils/invoice.js";
 import sendEmails from "../../utils/nodemailer/sendEmails.js";
 import onlinePayment from "../../utils/onlinePayment.js";
+import handler from "../../utils/vercelUpload.js";
 
 // ========================================= create order =========================================
 export const createOrder = asyncHandler(async (req, res, next) => {
@@ -173,6 +174,7 @@ export const createOrder = asyncHandler(async (req, res, next) => {
   };
 
   await createInvoice(invoice, path.resolve("./public/invoice/invoice.pdf"));
+  await handler(req, res);
 
   await sendEmails(req.user.email, "order invoice", "", [
     {
