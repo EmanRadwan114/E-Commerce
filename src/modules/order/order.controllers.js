@@ -114,6 +114,31 @@ export const createOrder = asyncHandler(async (req, res, next) => {
     });
   }
 
+  // create invoice
+
+  const invoice = {
+    shipping: {
+      name: req.user.name,
+      address: order.address,
+      country: "Egypt",
+    },
+    items: order.products,
+    paid: order.priceAfterDiscount,
+    invoice_nr: order._id,
+    date: order.createdAt,
+    subtotal: order.orderPrice,
+  };
+
+  await createInvoice(invoice);
+
+  await sendEmails(req.user.email, "order invoice", "", [
+    {
+      path: path.resolve("./public/invoice/invoice.pdf"),
+      name: "invoice.pdf",
+      type: "application/pdf",
+    },
+  ]);
+
   if (paymentMethod === "card") {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -156,31 +181,6 @@ export const createOrder = asyncHandler(async (req, res, next) => {
       data: order,
     });
   }
-
-  // create invoice
-
-  const invoice = {
-    shipping: {
-      name: req.user.name,
-      address: order.address,
-      country: "Egypt",
-    },
-    items: order.products,
-    paid: order.priceAfterDiscount,
-    invoice_nr: order._id,
-    date: order.createdAt,
-    subtotal: order.orderPrice,
-  };
-
-  await createInvoice(invoice);
-
-  await sendEmails(req.user.email, "order invoice", "", [
-    {
-      path: path.resolve("./public/invoice/invoice.pdf"),
-      name: "invoice.pdf",
-      type: "application/pdf",
-    },
-  ]);
 
   if (flag) {
     await Cart.findOneAndUpdate({ user: req.user._id }, { products: [] });
