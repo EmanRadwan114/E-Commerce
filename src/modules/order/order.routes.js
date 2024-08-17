@@ -1,4 +1,4 @@
-import { Router } from "express";
+import express from "express";
 import auth from "./../../middlewares/auth.middleware.js";
 import validation from "./../../middlewares/validation.middleware.js";
 import systemRoles from "./../../utils/systemRoles.js";
@@ -17,7 +17,7 @@ import {
   handlePaymentSuccess,
 } from "./order.controllers.js";
 
-const orderRouter = Router();
+const orderRouter = express.Router();
 
 // ========================== create order ===========================
 orderRouter
