@@ -131,7 +131,7 @@ export const createOrder = asyncHandler(async (req, res, next) => {
 
   await sendEmails(req.user.email, "order invoice", "", [
     {
-      path: "./invoice.pdf",
+      path: "../../../invoice.pdf",
       name: "invoice.pdf",
       type: "application/pdf",
     },
