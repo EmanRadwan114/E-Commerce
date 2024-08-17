@@ -1,7 +1,7 @@
 import "dotenv/config";
-import fs from "fs";
 import path from "path";
 import PDFDocument from "pdfkit";
+import { PassThrough } from "stream";
 
 export default async function createInvoice(invoice) {
   let doc = new PDFDocument({ size: "A4", margin: 50 });
