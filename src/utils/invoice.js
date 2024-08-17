@@ -1,3 +1,4 @@
+import "dotenv/config";
 import fs from "fs";
 import PDFDocument from "pdfkit";
 
@@ -15,7 +16,7 @@ export default async function createInvoice(invoice, path) {
 
 function generateHeader(doc) {
   doc
-    .image("public/assets/logo.png", 50, 45, {
+    .image("../../public/assets/logo.png", 50, 45, {
       width: 50,
     })
     .fillColor("#444444")
