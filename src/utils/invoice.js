@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import PDFDocument from "pdfkit";
 
-export default async function createInvoice(invoice, path) {
+export default async function createInvoice(invoice) {
   let doc = new PDFDocument({ size: "A4", margin: 50 });
 
   generateHeader(doc);
@@ -12,7 +12,14 @@ export default async function createInvoice(invoice, path) {
   generateFooter(doc);
 
   doc.end();
-  doc.pipe(fs.createWriteStream(path));
+
+  const stream = new PassThrough();
+  let buffers = [];
+
+  doc.on("data", (chunk) => buffers.push(chunk));
+  doc.on("end", () => (buffers = Buffer.concat(buffers)));
+
+  doc.pipe(stream);
 }
 
 function generateHeader(doc) {

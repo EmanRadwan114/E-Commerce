@@ -172,7 +172,7 @@ export const createOrder = asyncHandler(async (req, res, next) => {
     subtotal: order.orderPrice,
   };
 
-  await createInvoice(invoice, path.resolve("./public/invoice/invoice.pdf"));
+  await createInvoice(invoice);
 
   await sendEmails(req.user.email, "order invoice", "", [
     {
