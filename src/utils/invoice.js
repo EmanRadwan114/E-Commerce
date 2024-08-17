@@ -6,13 +6,6 @@ import { PassThrough } from "stream";
 export default async function createInvoice(invoice) {
   let doc = new PDFDocument({ size: "A4", margin: 50 });
 
-  generateHeader(doc);
-  generateCustomerInformation(doc, invoice);
-  generateInvoiceTable(doc, invoice);
-  generateFooter(doc);
-
-  doc.end();
-
   const stream = new PassThrough();
   let buffers = [];
 
@@ -20,6 +13,15 @@ export default async function createInvoice(invoice) {
   doc.on("end", () => (buffers = Buffer.concat(buffers)));
 
   doc.pipe(stream);
+
+  generateHeader(doc);
+  generateCustomerInformation(doc, invoice);
+  generateInvoiceTable(doc, invoice);
+  generateFooter(doc);
+
+  doc.end();
+
+  return stream;
 }
 
 function generateHeader(doc) {
