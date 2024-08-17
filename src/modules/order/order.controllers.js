@@ -170,7 +170,7 @@ export const createOrder = asyncHandler(async (req, res, next) => {
               name: product.title,
               images: [product.image.secure_url],
             },
-            unit_amount: product.finalPrice,
+            unit_amount: product.finalPrice * 100,
           },
           quantity: product.quantity,
         };
