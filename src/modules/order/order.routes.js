@@ -13,6 +13,8 @@ import {
   createOrder,
   getAllOrders,
   getUserOrders,
+  handlePaymentCancel,
+  handlePaymentSuccess,
 } from "./order.controllers.js";
 
 const orderRouter = Router();
@@ -35,6 +37,25 @@ orderRouter.get(
   getUserOrders
 );
 
+// ================= handle online payment success / cancel =================
+orderRouter.get(
+  "/success/:orderId",
+  auth([systemRoles.user]),
+  handlePaymentSuccess
+);
+orderRouter.get(
+  "/cancel/:orderId",
+  auth([systemRoles.user]),
+  handlePaymentCancel
+);
+
+// ========================== create webhook ==================================
+orderRouter.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  createWebhook
+);
+
 // ========================== cancel /update order =============================
 orderRouter.put(
   "/:orderId",
@@ -42,7 +63,5 @@ orderRouter.put(
   validation(cancelOrderSchema),
   cancelOrder
 );
-
-//
 
 export default orderRouter;

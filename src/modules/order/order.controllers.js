@@ -117,28 +117,28 @@ export const createOrder = asyncHandler(async (req, res, next) => {
   }
 
   // create invoice
-  // const invoice = {
-  //   shipping: {
-  //     name: req.user.name,
-  //     address: order.address,
-  //     country: "Egypt",
-  //   },
-  //   items: order.products,
-  //   paid: order.priceAfterDiscount,
-  //   invoice_nr: order._id,
-  //   date: order.createdAt,
-  //   subtotal: order.orderPrice,
-  // };
+  const invoice = {
+    shipping: {
+      name: req.user.name,
+      address: order.address,
+      country: "Egypt",
+    },
+    items: order.products,
+    paid: order.priceAfterDiscount,
+    invoice_nr: order._id,
+    date: order.createdAt,
+    subtotal: order.orderPrice,
+  };
 
-  // await createInvoice(invoice, "./public/invoice/invoice.pdf");
+  await createInvoice(invoice, "./public/invoice/invoice.pdf");
 
-  // await sendEmails(req.user.email, "order invoice", "", [
-  //   {
-  //     path: "./public/invoice/invoice.pdf",
-  //     name: "invoice.pdf",
-  //     type: "application/pdf",
-  //   },
-  // ]);
+  await sendEmails(req.user.email, "order invoice", "", [
+    {
+      path: "./public/invoice/invoice.pdf",
+      name: "invoice.pdf",
+      type: "application/pdf",
+    },
+  ]);
 
   if (paymentMethod === "card") {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -184,6 +184,59 @@ export const createOrder = asyncHandler(async (req, res, next) => {
   }
 
   res.status(201).json({ message: "success", data: order });
+});
+
+// ================================= handle payment success ======================================
+export const handlePaymentSuccess = asyncHandler(async (req, res, next) => {
+  const { orderId } = req.params;
+  const order = await Order.findById(orderId);
+
+  if (!order) return next(new AppError("order not found", 404));
+
+  res.status(200).json({ message: "success", data: order });
+});
+
+// =================================== handle payment cancel ======================================
+export const handlePaymentCancel = asyncHandler(async (req, res, next) => {
+  const { orderId } = req.params;
+  const order = await Order.findById(orderId);
+
+  if (!order) return next(new AppError("order not found", 404));
+
+  res.status(200).json({ message: "order payment is canceled", data: order });
+});
+
+// ========================================= create webhook ======================================
+
+export const createWebhook = asyncHandler(async (req, res, next) => {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  const sig = req.headers["stripe-signature"];
+
+  const event = stripe.webhooks.constructEvent(
+    req.body,
+    sig,
+    process.env.ENDPOINT_SECRET
+  );
+
+  if (!event) return next(new AppError(`Webhook Error: ${err.message}`, 400));
+
+  // Handle the event
+  const { orderId } = event.data.object.metadata;
+
+  if (event.type !== "checkout.session.completed") {
+    const order = await Order.findByIdAndUpdate(orderId, {
+      status: "rejected",
+    });
+
+    return res
+      .status(400)
+      .json({ message: "order payment is rejected", data: order });
+  }
+  const order = await Order.findByIdAndUpdate(orderId, {
+    status: "placed",
+  });
+
+  return res.status(200).json({ message: "order is placed", data: order });
 });
 
 // ========================================= cancel Order ======================================

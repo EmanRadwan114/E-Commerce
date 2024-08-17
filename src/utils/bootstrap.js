@@ -19,7 +19,12 @@ export default function bootstrap(app, express) {
   const PORT = process.env.PORT || 3000;
 
   // =============================== body parser ===============================
-  app.use(express.json());
+  app.use((req, res, next) => {
+    if (req.originalUrl === "/orders/webhook") return next();
+    else {
+      express.json()(req, res, next);
+    }
+  });
 
   // ============================== routes ===============================
   app.use("/auth", userRouter);
