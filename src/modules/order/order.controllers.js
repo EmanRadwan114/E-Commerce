@@ -113,10 +113,6 @@ export const createOrder = asyncHandler(async (req, res, next) => {
     });
   }
 
-  if (flag) {
-    await Cart.findOneAndUpdate({ user: req.user._id }, { products: [] });
-  }
-
   // create invoice
   const invoice = {
     shipping: {
@@ -182,6 +178,10 @@ export const createOrder = asyncHandler(async (req, res, next) => {
       session_url: session.url,
       data: order,
     });
+  }
+
+  if (flag) {
+    await Cart.findOneAndUpdate({ user: req.user._id }, { products: [] });
   }
 
   res.status(201).json({ message: "success", data: order });
