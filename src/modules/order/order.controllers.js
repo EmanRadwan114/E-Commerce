@@ -1,3 +1,4 @@
+import "dotenv/config";
 import Stripe from "stripe";
 import asyncHandler from "./../../utils/error handling/asyncHandler.js";
 import AppError from "../../utils/error handling/AppError.js";

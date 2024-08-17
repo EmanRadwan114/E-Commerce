@@ -1,3 +1,4 @@
+import "dotenv/config";
 import Coupon from "../../../Database/Models/coupon.model.js";
 import cloudinary from "../cloudinary/cloudinary.js";
 import asyncHandler from "./asyncHandler.js";
