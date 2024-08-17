@@ -16,9 +16,9 @@ export default async function createInvoice(invoice, path) {
 
 function generateHeader(doc) {
   doc
-    // .image("logo.png", 50, 45, {
-    //   width: 50,
-    // })
+    .image("logo.png", 50, 45, {
+      width: 50,
+    })
     .fillColor("#444444")
     .fontSize(20)
     .text("Shop Cart", 110, 57)

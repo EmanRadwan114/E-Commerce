@@ -127,16 +127,6 @@ export const createOrder = asyncHandler(async (req, res, next) => {
     subtotal: order.orderPrice,
   };
 
-  await createInvoice(invoice, "invoice.pdf");
-
-  await sendEmails(req.user.email, "order invoice", "", [
-    {
-      path: "invoice.pdf",
-      name: "invoice.pdf",
-      type: "application/pdf",
-    },
-  ]);
-
   if (paymentMethod === "card") {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -179,6 +169,16 @@ export const createOrder = asyncHandler(async (req, res, next) => {
       data: order,
     });
   }
+
+  await createInvoice(invoice, "invoice.pdf");
+
+  await sendEmails(req.user.email, "order invoice", "", [
+    {
+      path: "invoice.pdf",
+      name: "invoice.pdf",
+      type: "application/pdf",
+    },
+  ]);
 
   if (flag) {
     await Cart.findOneAndUpdate({ user: req.user._id }, { products: [] });
