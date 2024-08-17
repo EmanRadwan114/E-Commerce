@@ -1,3 +1,4 @@
+import Stripe from "stripe";
 import asyncHandler from "./../../utils/error handling/asyncHandler.js";
 import AppError from "../../utils/error handling/AppError.js";
 import Cart from "./../../../Database/Models/cart.model.js";
@@ -7,6 +8,7 @@ import Coupon from "./../../../Database/Models/coupon.model.js";
 import ApiFeatures from "../../utils/apiFeatures.js";
 import createInvoice from "../../utils/invoice.js";
 import sendEmails from "../../utils/nodemailer/sendEmails.js";
+import onlinePayment from "../../utils/onlinePayment.js";
 
 // ========================================= create order =========================================
 export const createOrder = asyncHandler(async (req, res, next) => {
@@ -115,28 +117,71 @@ export const createOrder = asyncHandler(async (req, res, next) => {
   }
 
   // create invoice
-  const invoice = {
-    shipping: {
-      name: req.user.name,
-      address: order.address,
-      country: "Egypt",
-    },
-    items: order.products,
-    paid: order.priceAfterDiscount,
-    invoice_nr: order._id,
-    date: order.createdAt,
-    subtotal: order.orderPrice,
-  };
+  // const invoice = {
+  //   shipping: {
+  //     name: req.user.name,
+  //     address: order.address,
+  //     country: "Egypt",
+  //   },
+  //   items: order.products,
+  //   paid: order.priceAfterDiscount,
+  //   invoice_nr: order._id,
+  //   date: order.createdAt,
+  //   subtotal: order.orderPrice,
+  // };
 
-  await createInvoice(invoice, "./public/invoice/invoice.pdf");
+  // await createInvoice(invoice, "./public/invoice/invoice.pdf");
 
-  await sendEmails(req.user.email, "order invoice", "", [
-    {
-      path: "./public/invoice/invoice.pdf",
-      name: "invoice.pdf",
-      type: "application/pdf",
-    },
-  ]);
+  // await sendEmails(req.user.email, "order invoice", "", [
+  //   {
+  //     path: "./public/invoice/invoice.pdf",
+  //     name: "invoice.pdf",
+  //     type: "application/pdf",
+  //   },
+  // ]);
+
+  if (paymentMethod === "card") {
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+    if (req.body.coupon) {
+      const coupon = await stripe.coupons.create({
+        percent_off: req.body.coupon.amount,
+        duration: "once",
+      });
+      req.body.couponId = coupon.id;
+    }
+
+    const session = await onlinePayment({
+      stripe,
+      payment_method_types: ["card"],
+      mode: "payment",
+      customer_email: req.user.email,
+      metadata: {
+        orderId: order._id.toString(),
+      },
+      success_url: `${req.protocol}://${req.headers.host}/orders/success/${order._id}`,
+      cancel_url: `${req.protocol}://${req.headers.host}/orders/cancel/${order._id}`,
+      discounts: req.body.coupon ? [{ coupon: req.body.couponId }] : [],
+      line_items: order.products.map((product) => {
+        return {
+          price_data: {
+            currency: "egp",
+            product_data: {
+              name: product.title,
+              images: [product.image.secure_url],
+            },
+            unit_amount: product.finalPrice,
+          },
+          quantity: product.quantity,
+        };
+      }),
+    });
+    return res.status(201).json({
+      message: "success",
+      session_url: session.url,
+      data: order,
+    });
+  }
 
   res.status(201).json({ message: "success", data: order });
 });
