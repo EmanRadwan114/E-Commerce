@@ -1,5 +1,6 @@
 import "dotenv/config";
 import Stripe from "stripe";
+import path from "path";
 import asyncHandler from "./../../utils/error handling/asyncHandler.js";
 import AppError from "../../utils/error handling/AppError.js";
 import Cart from "./../../../Database/Models/cart.model.js";
@@ -157,28 +158,29 @@ export const createOrder = asyncHandler(async (req, res, next) => {
   }
 
   // create invoice
-  // const invoice = {
-  //   shipping: {
-  //     name: req.user.name,
-  //     address: order.address,
-  //     country: "Egypt",
-  //   },
-  //   items: order.products,
-  //   paid: order.priceAfterDiscount,
-  //   invoice_nr: order._id,
-  //   date: order.createdAt,
-  //   subtotal: order.orderPrice,
-  // };
 
-  // await createInvoice(invoice, "invoice.pdf");
+  const invoice = {
+    shipping: {
+      name: req.user.name,
+      address: order.address,
+      country: "Egypt",
+    },
+    items: order.products,
+    paid: order.priceAfterDiscount,
+    invoice_nr: order._id,
+    date: order.createdAt,
+    subtotal: order.orderPrice,
+  };
 
-  // await sendEmails(req.user.email, "order invoice", "", [
-  //   {
-  //     path: "invoice.pdf",
-  //     name: "invoice.pdf",
-  //     type: "application/pdf",
-  //   },
-  // ]);
+  await createInvoice(invoice, path.resolve("./public/invoice/invoice.pdf"));
+
+  await sendEmails(req.user.email, "order invoice", "", [
+    {
+      path: path.resolve("./public/invoice/invoice.pdf"),
+      name: "invoice.pdf",
+      type: "application/pdf",
+    },
+  ]);
 
   if (flag) {
     await Cart.findOneAndUpdate({ user: req.user._id }, { products: [] });
