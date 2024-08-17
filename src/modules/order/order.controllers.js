@@ -71,6 +71,7 @@ export const createOrder = asyncHandler(async (req, res, next) => {
     product.price = checkProduct.price;
     product.priceAfterDiscount = checkProduct.finalPrice;
     product.finalPrice = checkProduct.finalPrice * product.quantity;
+    product.image = checkProduct.image.secure_url;
     orderPrice += product.finalPrice;
     finalOrderProducts.push(product);
   }

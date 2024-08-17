@@ -34,6 +34,10 @@ const schema = new mongoose.Schema(
           type: Number,
           required: [true, "product price after discount is required"],
         },
+        image: {
+          type: String,
+          required: [true, "product image is required"],
+        },
       },
     ],
     orderPrice: {
