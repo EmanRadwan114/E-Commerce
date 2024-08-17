@@ -228,9 +228,13 @@ export const createWebhook = asyncHandler(async (req, res, next) => {
   const { orderId } = event.data.object.metadata;
 
   if (event.type !== "checkout.session.completed") {
-    const order = await Order.findByIdAndUpdate(orderId, {
-      status: "rejected",
-    });
+    const order = await Order.findByIdAndUpdate(
+      orderId,
+      {
+        status: "rejected",
+      },
+      { new: true }
+    );
 
     return res
       .status(400)
